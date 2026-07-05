@@ -1,0 +1,21 @@
+app = "dunia-alaraas"
+primary_region = "ams"
+kill_signal = "SIGINT"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 3001
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+[[mounts]]
+  source = "data"
+  destination = "/app/server"
