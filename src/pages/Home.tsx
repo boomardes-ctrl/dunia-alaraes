@@ -43,6 +43,45 @@ function SectionHeader({ title, link, icon: Icon }: { title: string; link: strin
   );
 }
 
+function Gallery({ images }: { images: string[] }) {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [current, setCurrent] = useState(0);
+  const scroll = (dir: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
+  };
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => setCurrent(Math.round(el.scrollLeft / el.clientWidth));
+    el.addEventListener('scroll', onScroll);
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <div className="relative w-full lg:w-[420px] shrink-0">
+      <div ref={scrollRef} className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth rounded-2xl" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {images.map((img, i) => (
+          <div key={i} className="min-w-full snap-center p-1">
+            <img src={img} alt="" className="w-full aspect-[4/3] object-cover rounded-xl shadow-lg" loading={i === 0 ? 'eager' : 'lazy'} />
+          </div>
+        ))}
+      </div>
+      {images.length > 1 && (
+        <div className="flex items-center justify-center gap-3 mt-3">
+          <button onClick={() => scroll(-1)} className="p-1.5 bg-white/20 backdrop-blur rounded-lg text-white hover:bg-white/40 transition-all"><ChevronRight size={16} /></button>
+          <div className="flex gap-1.5">
+            {images.map((_, i) => (
+              <button key={i} onClick={() => { scrollRef.current?.children[i]?.scrollIntoView({ behavior: 'smooth' }); }} className={`h-1.5 rounded-full transition-all ${i === current ? 'w-5 bg-white' : 'w-1.5 bg-white/50'}`} />
+            ))}
+          </div>
+          <button onClick={() => scroll(1)} className="p-1.5 bg-white/20 backdrop-blur rounded-lg text-white hover:bg-white/40 transition-all"><ChevronLeft size={16} /></button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
@@ -74,48 +113,6 @@ export default function Home() {
       setSettings(sett);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
-
-function Gallery({ images }: { images: string[] }) {
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const [current, setCurrent] = useState(0);
-  const scroll = (dir: number) => {
-    if (!scrollRef.current) return;
-    const w = scrollRef.current.clientWidth;
-    scrollRef.current.scrollBy({ left: dir * w, behavior: 'smooth' });
-  };
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const onScroll = () => {
-      const idx = Math.round(el.scrollLeft / el.clientWidth);
-      setCurrent(idx);
-    };
-    el.addEventListener('scroll', onScroll);
-    return () => el.removeEventListener('scroll', onScroll);
-  }, []);
-  return (
-    <div className="relative w-full lg:w-[400px] shrink-0 group">
-      <div ref={scrollRef} className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth rounded-2xl no-scrollbar" style={{ scrollbarWidth: 'none' }}>
-        {images.map((img, i) => (
-          <div key={i} className="min-w-full snap-center p-1">
-            <img src={img} alt="" className="w-full aspect-[4/3] object-cover rounded-2xl shadow-2xl" loading="lazy" />
-          </div>
-        ))}
-      </div>
-      {images.length > 1 && (
-        <>
-          <button onClick={() => scroll(-1)} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/20 backdrop-blur-md rounded-xl text-white hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100"><ChevronRight size={20} /></button>
-          <button onClick={() => scroll(1)} className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/20 backdrop-blur-md rounded-xl text-white hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100"><ChevronLeft size={20} /></button>
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-            {images.map((_, i) => (
-              <button key={i} onClick={() => { scrollRef.current?.children[i]?.scrollIntoView({ behavior: 'smooth' }); }} className={`w-2 h-2 rounded-full transition-all ${i === current ? 'bg-white w-4' : 'bg-white/50'}`} />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
 
   return (
     <div>
