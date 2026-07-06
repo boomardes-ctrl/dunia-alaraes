@@ -112,15 +112,15 @@ export default function Home() {
     <div>
       <Helmet><title>{settings?.siteName || 'دنيا العرائس'} - المتجر الأول للعطور والتجميل</title><meta name="description" content={settings?.siteDescription || 'متجر متخصص في بيع العطور ومستحضرات التجميل والإكسسوارات النسائية'} /></Helmet>
       {/* Hero Section */}
-      <section ref={heroRef} className="relative min-h-[80vh] lg:min-h-[90vh] flex items-center bg-gradient-to-br from-primary via-primary-dark to-[#2D0A18]">
-        <div className="absolute inset-0 overflow-hidden">
+      <section ref={heroRef} className="relative py-10 md:py-20 bg-gradient-to-br from-primary via-primary-dark to-[#2D0A18]">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="hero-glow bg-accent -top-20 -right-20" />
           <div className="hero-glow bg-pink-500 -bottom-20 -left-20" />
           <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-accent rounded-full animate-ping" style={{ animationDuration: '3s' }} />
           <div className="absolute top-1/3 right-1/4 w-3 h-3 bg-accent/30 rounded-full animate-ping" style={{ animationDuration: '4s' }} />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full">
-          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+          <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-12">
             <div className={`flex-1 max-w-2xl transition-all duration-1000 ${heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-3 md:mb-6">
                 <Sparkles size={14} className="text-accent" />
