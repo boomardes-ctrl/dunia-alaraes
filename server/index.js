@@ -30,7 +30,7 @@ app.use('/api/settings', settingsRouter);
 
 if (isProd) {
   app.use(express.static(join(__dirname, '..', 'dist')));
-  app.get('*', (req, res) => {
+  app.get('/{*any}', (req, res) => {
     if (req.path.startsWith('/api')) return;
     res.sendFile(join(__dirname, '..', 'dist', 'index.html'));
   });
