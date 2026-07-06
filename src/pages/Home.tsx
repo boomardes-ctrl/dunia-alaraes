@@ -88,22 +88,22 @@ export default function Home() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className={`max-w-2xl transition-all duration-1000 ${heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-              <Sparkles size={16} className="text-accent" />
-              <span className="text-white/80 text-sm font-medium">متجر العطور ومستحضرات التجميل</span>
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-4 md:mb-6">
+              <Sparkles size={14} className="text-accent" />
+              <span className="text-white/80 text-xs md:text-sm font-medium">متجر العطور ومستحضرات التجميل</span>
             </div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-tight mb-4 md:mb-6">
               {settings?.heroTitle || 'دنيا العرائس'}
             </h1>
-            <p className="text-lg md:text-xl text-white/70 mb-10 leading-relaxed max-w-lg">
+            <p className="text-base md:text-xl text-white/70 mb-8 md:mb-10 leading-relaxed max-w-lg">
               {settings?.heroSubtitle || 'اكتشفي عالم من الجمال والأناقة مع أحدث منتجات العطور ومستحضرات التجميل'}
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Link to="/products" className="bg-gradient-to-r from-accent to-accent-dark text-primary-dark font-black px-8 py-4 rounded-2xl hover:shadow-2xl hover:shadow-accent/30 hover:scale-105 transition-all text-lg inline-flex items-center gap-3">
-                تسوقي الآن <ArrowLeft size={20} />
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Link to="/products" className="bg-gradient-to-r from-accent to-accent-dark text-primary-dark font-black px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:shadow-2xl hover:shadow-accent/30 hover:scale-105 transition-all text-base md:text-lg inline-flex items-center justify-center gap-3">
+                تسوقي الآن <ArrowLeft size={18} />
               </Link>
-              <Link to="/products?hasOffer=1" className="glass text-white font-bold px-8 py-4 rounded-2xl hover:bg-white/20 transition-all text-lg inline-flex items-center gap-3">
-                <Tag size={18} /> العروض
+              <Link to="/products?hasOffer=1" className="glass text-white font-bold px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:bg-white/20 transition-all text-base md:text-lg inline-flex items-center justify-center gap-3">
+                <Tag size={16} /> العروض
               </Link>
             </div>
           </div>

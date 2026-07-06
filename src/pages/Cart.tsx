@@ -122,31 +122,31 @@ export default function Cart() {
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
             {items.map((item) => (
-              <div key={item.product.id} className="card-modern p-4 md:p-6 flex gap-4 hover:shadow-xl transition-all">
+              <div key={item.product.id} className="card-modern p-3 md:p-6 flex gap-3 md:gap-4 hover:shadow-xl transition-all">
                 <img
                   src={item.product.images?.[0] || '/placeholder.svg'}
                   alt={item.product.name}
-                  className="w-24 h-24 md:w-28 md:h-28 object-cover rounded-2xl flex-shrink-0"
+                  className="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl md:rounded-2xl flex-shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <Link to={`/product/${item.product.id}`} className="font-bold text-base hover:text-primary transition-colors line-clamp-1">
+                  <Link to={`/product/${item.product.id}`} className="font-bold text-sm md:text-base hover:text-primary transition-colors line-clamp-1">
                     {item.product.name}
                   </Link>
-                  <p className="text-primary font-black text-lg mt-1">{item.product.price} <span className="text-sm font-medium text-text-light">{CURRENCIES[item.product.currency]?.symbol || 'ر.س'}</span></p>
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center bg-gray-50 rounded-2xl border border-gray-200">
-                      <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="p-2 hover:bg-gray-100 transition-all rounded-r-2xl">
-                        <Minus size={16} />
+                  <p className="text-primary font-black text-sm md:text-lg mt-0.5 md:mt-1">{item.product.price} <span className="text-xs md:text-sm font-medium text-text-light">{CURRENCIES[item.product.currency]?.symbol || 'ر.س'}</span></p>
+                  <div className="flex items-center justify-between mt-2 md:mt-4">
+                    <div className="flex items-center bg-gray-50 rounded-xl md:rounded-2xl border border-gray-200">
+                      <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="p-1.5 md:p-2 hover:bg-gray-100 transition-all rounded-r-xl md:rounded-r-2xl">
+                        <Minus size={14} />
                       </button>
-                      <span className="px-4 font-bold text-sm min-w-[2.5rem] text-center">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="p-2 hover:bg-gray-100 transition-all rounded-l-2xl">
-                        <Plus size={16} />
+                      <span className="px-2 md:px-4 font-bold text-xs md:text-sm min-w-[2rem] md:min-w-[2.5rem] text-center">{item.quantity}</span>
+                      <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="p-1.5 md:p-2 hover:bg-gray-100 transition-all rounded-l-xl md:rounded-l-2xl">
+                        <Plus size={14} />
                       </button>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <p className="font-black text-primary">{item.product.price * item.quantity} <span className="text-sm font-medium text-text-light">{CURRENCIES[item.product.currency]?.symbol || 'ر.س'}</span></p>
-                      <button onClick={() => removeItem(item.product.id)} className="p-2 text-error/60 hover:text-error hover:bg-error/5 rounded-xl transition-all">
-                        <Trash2 size={18} />
+                    <div className="flex items-center gap-2 md:gap-4">
+                      <p className="font-black text-primary text-sm md:text-base">{item.product.price * item.quantity} <span className="text-xs md:text-sm font-medium text-text-light">{CURRENCIES[item.product.currency]?.symbol || 'ر.س'}</span></p>
+                      <button onClick={() => removeItem(item.product.id)} className="p-1.5 md:p-2 text-error/60 hover:text-error hover:bg-error/5 rounded-lg md:rounded-xl transition-all">
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
@@ -157,7 +157,7 @@ export default function Cart() {
 
           {/* Checkout Form */}
           <div className="lg:col-span-1">
-            <form onSubmit={handleSubmit} className="card-modern p-6 md:p-8 sticky top-28 space-y-5">
+            <form onSubmit={handleSubmit} className="card-modern p-4 md:p-8 sticky top-28 space-y-4 md:space-y-5">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl flex items-center justify-center">
                   <User size={20} className="text-primary" />

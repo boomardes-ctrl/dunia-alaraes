@@ -112,7 +112,8 @@ export default function AdminOrders() {
         <button type="submit" className="btn-primary px-4"><Search size={18} /></button>
       </form>
 
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      {/* Desktop: Table */}
+      <div className="hidden md:block bg-white rounded-2xl border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -176,7 +177,6 @@ export default function AdminOrders() {
                         <button
                           onClick={() => copyLink(o.token)}
                           className="p-1.5 hover:bg-gray-100 rounded-lg transition-all text-gray-400 hover:text-primary"
-                          title="نسخ الرابط"
                         >
                           <Copy size={14} />
                         </button>
@@ -185,7 +185,6 @@ export default function AdminOrders() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-1.5 hover:bg-blue-50 rounded-lg transition-all text-gray-400 hover:text-blue-600"
-                          title="فتح الرابط"
                         >
                           <ExternalLink size={14} />
                         </a>
@@ -193,13 +192,69 @@ export default function AdminOrders() {
                     ) : <span className="text-text-light text-xs">—</span>}
                   </td>
                   <td className="p-4">
-                    <button onClick={() => setSelectedOrder(o)} className="p-2 hover:bg-blue-50 text-blue-600 rounded-xl transition-all hover:shadow-sm" title="عرض التفاصيل"><Eye size={16} /></button>
+                    <button onClick={() => setSelectedOrder(o)} className="p-2 hover:bg-blue-50 text-blue-600 rounded-xl transition-all hover:shadow-sm"><Eye size={16} /></button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile: Cards */}
+      <div className="md:hidden space-y-3">
+        {orders.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-2xl border border-gray-100">
+            <p className="text-text-light">لا توجد طلبات</p>
+          </div>
+        ) : orders.map((o) => (
+          <div key={o.id} className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3 fade-in">
+            <div className="flex items-center justify-between">
+              <span className="font-black text-primary">{o.orderNumber}</span>
+              <span className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${statusColors[o.status] || 'bg-gray-100 text-gray-800 border-gray-200'}`}>
+                {o.status}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-bold">{o.customerName}</span>
+              <span className="text-text-light text-xs" dir="ltr">{o.customerPhone}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="font-black text-primary">
+                {o.totalSar! > 0 && <span>{o.totalSar} {CURRENCIES.sar.symbol} </span>}
+                {o.totalYer! > 0 && <span>{o.totalYer} {CURRENCIES.yer.symbol}</span>}
+              </span>
+              <span className="text-xs text-text-light">{formatDateTime(o.createdAt)}</span>
+            </div>
+            <div className="flex items-center justify-between pt-2 border-t border-gray-50">
+              <div className="flex items-center gap-2">
+                {o.token && (
+                  <>
+                    <button onClick={() => copyLink(o.token)} className="p-1.5 hover:bg-gray-100 rounded-lg transition-all text-gray-400 hover:text-primary" title="نسخ الرابط">
+                      <Copy size={14} />
+                    </button>
+                    <a href={`${window.location.origin}/cart/${o.token}`} target="_blank" rel="noopener noreferrer" className="p-1.5 hover:bg-blue-50 rounded-lg transition-all text-gray-400 hover:text-blue-600" title="فتح الرابط">
+                      <ExternalLink size={14} />
+                    </a>
+                  </>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <select
+                  value={o.status}
+                  onChange={(e) => handleStatusChange(o.id, e.target.value)}
+                  disabled={updating === o.id}
+                  className="text-xs bg-gray-50 border border-gray-200 rounded-xl px-2 py-1.5 font-bold"
+                >
+                  {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <button onClick={() => setSelectedOrder(o)} className="p-1.5 hover:bg-blue-50 text-blue-600 rounded-xl transition-all" title="عرض التفاصيل">
+                  <Eye size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {selectedOrder && (
