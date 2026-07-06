@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Sparkles, TrendingUp, Tag, Star, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sparkles, TrendingUp, Tag, Star, ArrowLeft } from 'lucide-react';
 import { api } from '../lib/api';
 import type { Product, Category, Settings } from '../types';
 import ProductGrid from '../components/products/ProductGrid';
@@ -39,45 +39,6 @@ function SectionHeader({ title, link, icon: Icon }: { title: string; link: strin
           <ArrowLeft size={14} />
         </span>
       </Link>
-    </div>
-  );
-}
-
-function Gallery({ images }: { images: string[] }) {
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const [current, setCurrent] = useState(0);
-  const scroll = (dir: number) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
-  };
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const onScroll = () => setCurrent(Math.round(el.scrollLeft / el.clientWidth));
-    el.addEventListener('scroll', onScroll);
-    return () => el.removeEventListener('scroll', onScroll);
-  }, []);
-  return (
-    <div className="relative w-full lg:w-[420px] shrink-0">
-      <div ref={scrollRef} className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth rounded-2xl" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-        {images.map((img, i) => (
-          <div key={i} className="min-w-full snap-center p-1">
-            <img src={img} alt="" className="w-full aspect-[4/3] object-cover rounded-xl shadow-lg" loading={i === 0 ? 'eager' : 'lazy'} />
-          </div>
-        ))}
-      </div>
-      {images.length > 1 && (
-        <div className="flex items-center justify-center gap-3 mt-3">
-          <button onClick={() => scroll(-1)} className="p-1.5 bg-white/20 backdrop-blur rounded-lg text-white hover:bg-white/40 transition-all"><ChevronRight size={16} /></button>
-          <div className="flex gap-1.5">
-            {images.map((_, i) => (
-              <button key={i} onClick={() => { scrollRef.current?.children[i]?.scrollIntoView({ behavior: 'smooth' }); }} className={`h-1.5 rounded-full transition-all ${i === current ? 'w-5 bg-white' : 'w-1.5 bg-white/50'}`} />
-            ))}
-          </div>
-          <button onClick={() => scroll(1)} className="p-1.5 bg-white/20 backdrop-blur rounded-lg text-white hover:bg-white/40 transition-all"><ChevronLeft size={16} /></button>
-        </div>
-      )}
     </div>
   );
 }
@@ -145,8 +106,16 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            {(settings?.gallery?.length || 0) > 0 && (
-              <Gallery images={settings!.gallery} />
+            {settings && settings.gallery && settings.gallery.length > 0 && (
+              <div className="w-full lg:w-[420px] shrink-0">
+                <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth rounded-2xl gap-2" style={{ scrollbarWidth: 'none' }}>
+                  {settings.gallery.map((url, i) => (
+                    <div key={i} className="min-w-full snap-center shrink-0">
+                      <img src={url} alt="" className="w-full aspect-[4/3] object-cover rounded-xl shadow-lg" />
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>
