@@ -15,7 +15,7 @@ const __dirname = dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 const isProd = process.env.NODE_ENV === 'production';
-const prodOrigins = (process.env.CORS_ORIGINS || 'https://dunya-alaraas.vercel.app,https://dunia-alaraas.fly.dev').split(',');
+const prodOrigins = (process.env.CORS_ORIGINS || 'https://dunia-alaraes.onrender.com,https://dunya-alaraas.vercel.app,https://dunia-alaraas.fly.dev').split(',');
 
 app.use(cors({ origin: isProd ? prodOrigins : '*' }));
 app.use(express.json({ limit: '50mb' }));

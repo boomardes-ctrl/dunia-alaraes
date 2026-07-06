@@ -43,8 +43,8 @@ const products = [
   { name: 'حلق ألماس', nameEn: 'Diamond Earrings', description: 'أقراط ألماس صغيرة بتصميم عصري. تضفي لمسة من الأناقة على إطلالتك.', price: 550, oldPrice: 700, categoryId: 5, featured: 1, brand: 'تيفاني', hasOffer: 1, images: ['https://images.unsplash.com/photo-1535632066927-ab7c8ab60908?w=400&q=80'] },
 ];
 
-const insProd = db.prepare(`INSERT INTO products (name, nameEn, description, price, oldPrice, images, categoryId, featured, bestSeller, hasOffer, brand, inStock)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`);
+const insProd = db.prepare(`INSERT INTO products (name, nameEn, description, price, oldPrice, images, categoryId, featured, bestSeller, hasOffer, brand, inStock, currency)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'sar')`);
 
 const existingProds = db.prepare('SELECT COUNT(*) as count FROM products').get();
 if (existingProds.count === 0) {

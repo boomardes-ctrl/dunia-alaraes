@@ -152,7 +152,8 @@ export default function AdminProducts() {
         </div>
       )}
 
-      <div className="card overflow-x-auto">
+      {/* Desktop Table */}
+      <div className="hidden sm:block card overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-gray-50">
@@ -184,6 +185,30 @@ export default function AdminProducts() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="sm:hidden space-y-3">
+        {products.map((p) => (
+          <div key={p.id} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+            <div className="flex gap-3">
+              <img src={p.images?.[0] || '/placeholder.svg'} alt="" className="w-16 h-16 object-cover rounded-xl shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-sm truncate">{p.name}</p>
+                <p className="text-xs text-gray-500">{p.categoryName || '-'}</p>
+                <p className="text-sm font-black text-primary mt-1">{p.price} {p.currency === 'yer' ? 'ر.ي' : 'ر.س'}</p>
+              </div>
+              <div className="flex flex-col gap-1">
+                <button onClick={() => handleEdit(p)} className="p-2 hover:bg-blue-50 text-blue-600 rounded-xl"><Edit2 size={16} /></button>
+                <button onClick={() => handleDelete(p.id)} className="p-2 hover:bg-red-50 text-red-600 rounded-xl"><Trash2 size={16} /></button>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-50">
+              <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${p.inStock ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>{p.inStock ? 'متوفر' : 'غير متوفر'}</span>
+              {p.brand && <span className="text-xs text-gray-400">{p.brand}</span>}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

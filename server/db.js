@@ -35,6 +35,7 @@ db.exec(`
     hasOffer INTEGER DEFAULT 0,
     brand TEXT,
     inStock INTEGER DEFAULT 1,
+    currency TEXT DEFAULT 'sar',
     createdAt TEXT DEFAULT (datetime('now')),
     FOREIGN KEY (categoryId) REFERENCES categories(id) ON DELETE SET NULL
   );

@@ -6,4 +6,4 @@ COPY . .
 RUN npm run build
 EXPOSE 3001
 ENV NODE_ENV=production
-CMD ["node", "server/index.js"]
+CMD ["sh", "-c", "node server/seed.js && node server/index.js"]
