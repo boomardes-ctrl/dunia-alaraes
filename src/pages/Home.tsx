@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Sparkles, TrendingUp, Tag, Star, ArrowLeft } from 'lucide-react';
+import { Sparkles, TrendingUp, Tag, Star, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { api } from '../lib/api';
-import type { Product, Category, Settings } from '../types';
+import type { Product, Settings } from '../types';
 import ProductGrid from '../components/products/ProductGrid';
 
 function useInView(): [React.RefObject<HTMLDivElement | null>, boolean] {
@@ -43,11 +43,56 @@ function SectionHeader({ title, link, icon: Icon }: { title: string; link: strin
   );
 }
 
+function GallerySlider({ images }: { images: string[] }) {
+  const [current, setCurrent] = useState(0);
+  const touchStartX = useRef(0);
+
+  const goTo = useCallback((i: number) => setCurrent(Math.max(0, Math.min(i, images.length - 1))), [images.length]);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => { if (e.key === 'ArrowLeft') goTo(current + 1); if (e.key === 'ArrowRight') goTo(current - 1); };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [current, goTo]);
+
+  return (
+    <div className="relative w-full lg:w-[400px] shrink-0 order-last lg:order-first group">
+      <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-white/5"
+        onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+        onTouchEnd={(e) => {
+          const diff = touchStartX.current - e.changedTouches[0].clientX;
+          if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
+        }}
+      >
+        <div className="flex transition-transform duration-500 ease-out" style={{ transform: `translateX(-${current * 100}%)` }}>
+          {images.map((url, i) => (
+            <div key={i} className="min-w-full">
+              <img src={url} alt="" className="w-full aspect-[4/3] object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
+            </div>
+          ))}
+        </div>
+        {images.length > 1 && (
+          <>
+            <button onClick={() => goTo(current - 1)} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/30 backdrop-blur rounded-xl text-white hover:bg-white/50 transition-all opacity-0 group-hover:opacity-100"><ChevronRight size={20} /></button>
+            <button onClick={() => goTo(current + 1)} className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/30 backdrop-blur rounded-xl text-white hover:bg-white/50 transition-all opacity-0 group-hover:opacity-100"><ChevronLeft size={20} /></button>
+          </>
+        )}
+      </div>
+      {images.length > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-3">
+          {images.map((_, i) => (
+            <button key={i} onClick={() => goTo(i)} className={`h-2 rounded-full transition-all duration-300 ${i === current ? 'w-6 bg-accent' : 'w-2 bg-white/40 hover:bg-white/60'}`} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [offers, setOffers] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,21 +100,18 @@ export default function Home() {
   const [featRef, featInView] = useInView();
   const [bestRef, bestInView] = useInView();
   const [offersRef, offersInView] = useInView();
-  const [catsRef, catsInView] = useInView();
 
   useEffect(() => {
     Promise.all([
       api.getProducts({ featured: '1' }),
       api.getProducts({ bestSeller: '1' }),
       api.getProducts({ hasOffer: '1' }),
-      api.getCategories(),
       api.getBrands(),
       api.getSettings(),
-    ]).then(([feat, best, offer, cats, brs, sett]) => {
+    ]).then(([feat, best, offer, brs, sett]) => {
       setProducts(feat);
       setBestSellers(best);
       setOffers(offer);
-      setCategories(cats);
       setBrands(brs);
       setSettings(sett);
     }).catch(() => {}).finally(() => setLoading(false));
@@ -106,6 +148,9 @@ export default function Home() {
                 </Link>
               </div>
             </div>
+            {settings && settings.gallery && settings.gallery.length > 0 && (
+              <GallerySlider images={settings.gallery} />
+            )}
           </div>
         </div>
         {settings?.heroImage && (
@@ -120,47 +165,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Gallery Section */}
-      {settings && settings.gallery && settings.gallery.length > 0 && (
-        <section className="py-12 md:py-16 bg-gradient-to-b from-primary/5 to-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl md:text-3xl font-black mb-6 text-center">معرض الصور</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-              {settings.gallery.map((url, i) => (
-                <div key={i} className="group overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all">
-                  <img src={url} alt="" className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-all duration-500" loading="lazy" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Categories */}
-      {categories.length > 0 && (
-        <section ref={catsRef} className="max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24">
-          <SectionHeader title="الأقسام" link="/products" />
-          <div className={`grid grid-cols-3 md:grid-cols-6 gap-4 transition-all duration-700 ${catsInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            {categories.map((cat, i) => (
-              <Link
-                key={cat.id}
-                to={`/products?category=${cat.id}`}
-                className="group card-modern p-5 text-center hover:border-primary/20"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-primary/5 to-accent/5 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 group-hover:from-primary group-hover:to-accent/80 transition-all duration-300">
-                  {cat.image ? (
-                    <img src={cat.image} alt={cat.name} className="w-10 h-10 object-cover rounded-xl" />
-                  ) : (
-                    <Sparkles size={22} className="text-primary group-hover:text-white transition-colors" />
-                  )}
-                </div>
-                <span className="font-bold text-sm group-hover:text-primary transition-colors">{cat.name}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+{/* Categories removed from homepage */}
 
       {/* Featured Products */}
       {products.length > 0 && (
