@@ -99,6 +99,7 @@ const defaultSettings = {
   email: 'info@dunyaalaræs.com',
   exchangeRate: '250',
   socialLinks: '[]',
+  gallery: '[]',
 };
 
 const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');

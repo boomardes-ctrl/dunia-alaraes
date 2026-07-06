@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Sparkles, TrendingUp, Tag, Star, ArrowLeft } from 'lucide-react';
+import { Sparkles, TrendingUp, Tag, Star, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { api } from '../lib/api';
 import type { Product, Category, Settings } from '../types';
 import ProductGrid from '../components/products/ProductGrid';
@@ -75,6 +75,48 @@ export default function Home() {
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
+function Gallery({ images }: { images: string[] }) {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [current, setCurrent] = useState(0);
+  const scroll = (dir: number) => {
+    if (!scrollRef.current) return;
+    const w = scrollRef.current.clientWidth;
+    scrollRef.current.scrollBy({ left: dir * w, behavior: 'smooth' });
+  };
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const idx = Math.round(el.scrollLeft / el.clientWidth);
+      setCurrent(idx);
+    };
+    el.addEventListener('scroll', onScroll);
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <div className="relative w-full lg:w-[400px] shrink-0 group">
+      <div ref={scrollRef} className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth rounded-2xl no-scrollbar" style={{ scrollbarWidth: 'none' }}>
+        {images.map((img, i) => (
+          <div key={i} className="min-w-full snap-center p-1">
+            <img src={img} alt="" className="w-full aspect-[4/3] object-cover rounded-2xl shadow-2xl" loading="lazy" />
+          </div>
+        ))}
+      </div>
+      {images.length > 1 && (
+        <>
+          <button onClick={() => scroll(-1)} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/20 backdrop-blur-md rounded-xl text-white hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100"><ChevronRight size={20} /></button>
+          <button onClick={() => scroll(1)} className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/20 backdrop-blur-md rounded-xl text-white hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100"><ChevronLeft size={20} /></button>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            {images.map((_, i) => (
+              <button key={i} onClick={() => { scrollRef.current?.children[i]?.scrollIntoView({ behavior: 'smooth' }); }} className={`w-2 h-2 rounded-full transition-all ${i === current ? 'bg-white w-4' : 'bg-white/50'}`} />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
   return (
     <div>
       <Helmet><title>{settings?.siteName || 'دنيا العرائس'} - المتجر الأول للعطور والتجميل</title><meta name="description" content={settings?.siteDescription || 'متجر متخصص في بيع العطور ومستحضرات التجميل والإكسسوارات النسائية'} /></Helmet>
@@ -87,25 +129,30 @@ export default function Home() {
           <div className="absolute top-1/3 right-1/4 w-3 h-3 bg-accent/30 rounded-full animate-ping" style={{ animationDuration: '4s' }} />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full">
-          <div className={`max-w-2xl transition-all duration-1000 ${heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-4 md:mb-6">
-              <Sparkles size={14} className="text-accent" />
-              <span className="text-white/80 text-xs md:text-sm font-medium">متجر العطور ومستحضرات التجميل</span>
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+            <div className={`flex-1 max-w-2xl transition-all duration-1000 ${heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-4 md:mb-6">
+                <Sparkles size={14} className="text-accent" />
+                <span className="text-white/80 text-xs md:text-sm font-medium">متجر العطور ومستحضرات التجميل</span>
+              </div>
+              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-tight mb-4 md:mb-6">
+                {settings?.heroTitle || 'دنيا العرائس'}
+              </h1>
+              <p className="text-base md:text-xl text-white/70 mb-8 md:mb-10 leading-relaxed max-w-lg">
+                {settings?.heroSubtitle || 'اكتشف عالم من الجمال والأناقة مع أحدث منتجات العطور ومستحضرات التجميل'}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Link to="/products" className="bg-gradient-to-r from-accent to-accent-dark text-primary-dark font-black px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:shadow-2xl hover:shadow-accent/30 hover:scale-105 transition-all text-base md:text-lg inline-flex items-center justify-center gap-3">
+                  تسوق الآن <ArrowLeft size={18} />
+                </Link>
+                <Link to="/products?hasOffer=1" className="glass text-white font-bold px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:bg-white/20 transition-all text-base md:text-lg inline-flex items-center justify-center gap-3">
+                  <Tag size={16} /> العروض
+                </Link>
+              </div>
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-tight mb-4 md:mb-6">
-              {settings?.heroTitle || 'دنيا العرائس'}
-            </h1>
-            <p className="text-base md:text-xl text-white/70 mb-8 md:mb-10 leading-relaxed max-w-lg">
-              {settings?.heroSubtitle || 'اكتشفي عالم من الجمال والأناقة مع أحدث منتجات العطور ومستحضرات التجميل'}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <Link to="/products" className="bg-gradient-to-r from-accent to-accent-dark text-primary-dark font-black px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:shadow-2xl hover:shadow-accent/30 hover:scale-105 transition-all text-base md:text-lg inline-flex items-center justify-center gap-3">
-                تسوق الآن <ArrowLeft size={18} />
-              </Link>
-              <Link to="/products?hasOffer=1" className="glass text-white font-bold px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:bg-white/20 transition-all text-base md:text-lg inline-flex items-center justify-center gap-3">
-                <Tag size={16} /> العروض
-              </Link>
-            </div>
+            {(settings?.gallery?.length || 0) > 0 && (
+              <Gallery images={settings!.gallery} />
+            )}
           </div>
         </div>
         {settings?.heroImage && (
@@ -113,7 +160,7 @@ export default function Home() {
         )}
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/40">
-          <span className="text-xs font-medium">اسحبي للأسفل</span>
+          <span className="text-xs font-medium">اسحب للأسفل</span>
           <div className="w-5 h-8 border-2 border-white/20 rounded-full flex justify-center p-1">
             <div className="w-1.5 h-1.5 bg-accent rounded-full animate-bounce" />
           </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Plus, X, GripVertical } from 'lucide-react';
+import { Plus, X, GripVertical, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { api } from '../../lib/api';
 import type { Settings, SocialLink } from '../../types';
 import { SOCIAL_PLATFORMS } from '../../types';
@@ -10,7 +10,7 @@ export default function AdminSettings() {
     siteName: '', siteDescription: '', phone: '', whatsapp: '', logo: '',
     primaryColor: '#6B1D3A', accentColor: '#C9A84C', heroTitle: '', heroSubtitle: '',
     heroImage: '', aboutText: '', address: '', email: '', exchangeRate: '250',
-    socialLinks: [],
+    socialLinks: [], gallery: [],
   });
   const [saved, setSaved] = useState(false);
 
@@ -121,6 +121,41 @@ export default function AdminSettings() {
           <div>
             <label className="block text-xs font-bold text-text-light mb-1">نبذة عن المتجر</label>
             <textarea value={form.aboutText} onChange={(e) => setForm({ ...form, aboutText: e.target.value })} className="input-field" rows={3} />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 space-y-4">
+          <h2 className="font-bold text-lg">معرض الصور</h2>
+          <p className="text-xs text-text-light">أضف حتى 5 صور للإعلانات والعروض (تظهر في الصفحة الرئيسية)</p>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="relative">
+                {form.gallery[i] ? (
+                  <div className="relative group">
+                    <img src={form.gallery[i]} alt={`صورة ${i + 1}`} className="w-full aspect-square object-cover rounded-xl border border-gray-200" />
+                    <button onClick={() => {
+                      const g = [...form.gallery];
+                      g.splice(i, 1);
+                      setForm({ ...form, gallery: g });
+                    }} className="absolute top-1 left-1 p-1.5 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600"><Trash2 size={14} /></button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-primary/40 hover:bg-gray-50 transition-all">
+                    <ImageIcon size={24} className="text-gray-300" />
+                    <span className="text-xs text-gray-400 mt-1">إضافة</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const res = await api.uploadImage(file);
+                      const g = [...form.gallery];
+                      g[i] = res.url;
+                      setForm({ ...form, gallery: g });
+                      e.target.value = '';
+                    }} />
+                  </label>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 

@@ -89,4 +89,5 @@ export interface Settings {
   email: string;
   exchangeRate: string;
   socialLinks: SocialLink[];
+  gallery: string[];
 }
