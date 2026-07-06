@@ -102,7 +102,7 @@ const defaultSettings = {
   email: 'info@dunyaalaræs.com',
   exchangeRate: '250',
   socialLinks: '[]',
-  gallery: '[]',
+  gallery: '["/gallery/1.svg","/gallery/2.svg","/gallery/3.svg","/gallery/4.svg","/gallery/5.svg"]',
 };
 
 const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
