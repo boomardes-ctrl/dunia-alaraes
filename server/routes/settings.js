@@ -19,8 +19,10 @@ function auth(req, res, next) {
 router.get('/', (req, res) => {
   const rows = db.prepare('SELECT key, value FROM settings').all();
   const settings = {};
+  const stringKeys = ['phone', 'whatsapp', 'siteName', 'siteDescription', 'address', 'email', 'heroTitle', 'heroSubtitle', 'aboutText'];
   for (const row of rows) {
     try { settings[row.key] = JSON.parse(row.value); } catch { settings[row.key] = row.value; }
+    if (stringKeys.includes(row.key)) settings[row.key] = String(settings[row.key]);
   }
   res.json(settings);
 });

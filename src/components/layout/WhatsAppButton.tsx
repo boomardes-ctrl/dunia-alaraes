@@ -5,7 +5,7 @@ interface Props {
 }
 
 export default function WhatsAppButton({ phone }: Props) {
-  const num = phone.replace(/[^0-9]/g, '');
+  const num = String(phone).replace(/[^0-9]/g, '');
   return (
     <a
       href={`https://wa.me/${num}`}
