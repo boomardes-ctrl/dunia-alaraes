@@ -32,7 +32,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/brands', (req, res) => {
-  const brands = db.prepare('SELECT DISTINCT brand FROM products WHERE brand IS NOT NULL AND brand != ""').all();
+  const brands = db.prepare("SELECT DISTINCT brand FROM products WHERE brand IS NOT NULL AND brand != ''").all();
   res.json(brands.map(b => b.brand));
 });
 

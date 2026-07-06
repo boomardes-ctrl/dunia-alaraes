@@ -106,17 +106,6 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            {settings && settings.gallery && settings.gallery.length > 0 && (
-              <div className="w-full lg:w-[420px] shrink-0">
-                <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth rounded-2xl gap-2" style={{ scrollbarWidth: 'none' }}>
-                  {settings.gallery.map((url, i) => (
-                    <div key={i} className="min-w-full snap-center shrink-0">
-                      <img src={url} alt="" className="w-full aspect-[4/3] object-cover rounded-xl shadow-lg" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
         {settings?.heroImage && (
@@ -130,6 +119,22 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Gallery Section */}
+      {settings && settings.gallery && settings.gallery.length > 0 && (
+        <section className="py-12 md:py-16 bg-gradient-to-b from-primary/5 to-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl md:text-3xl font-black mb-6 text-center">معرض الصور</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+              {settings.gallery.map((url, i) => (
+                <div key={i} className="group overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all">
+                  <img src={url} alt="" className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-all duration-500" loading="lazy" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Categories */}
       {categories.length > 0 && (
