@@ -13,6 +13,8 @@ export default function AdminSettings() {
     socialLinks: [], gallery: [],
   });
   const [saved, setSaved] = useState(false);
+  const [passwords, setPasswords] = useState({ oldPassword: '', newPassword: '' });
+  const [passMsg, setPassMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     api.getSettings().then((s: any) => setForm({ ...s, socialLinks: s.socialLinks || [] })).catch(() => {});
@@ -195,6 +197,33 @@ export default function AdminSettings() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 space-y-4">
+          <h2 className="font-bold text-lg">تغيير كلمة المرور</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-text-light mb-1">كلمة المرور الحالية</label>
+              <input type="password" value={passwords.oldPassword} onChange={(e) => setPasswords(p => ({ ...p, oldPassword: e.target.value }))} className="input-field" dir="ltr" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-text-light mb-1">كلمة المرور الجديدة</label>
+              <input type="password" value={passwords.newPassword} onChange={(e) => setPasswords(p => ({ ...p, newPassword: e.target.value }))} className="input-field" dir="ltr" />
+            </div>
+          </div>
+          {passMsg && (
+            <div className={`text-sm font-medium ${passMsg.type === 'success' ? 'text-green-600' : 'text-red-500'}`}>{passMsg.text}</div>
+          )}
+          <button type="button" onClick={async () => {
+            if (!passwords.oldPassword || !passwords.newPassword) { setPassMsg({ type: 'error', text: 'يرجى تعبئة الحقلين' }); return; }
+            try {
+              await api.changePassword(passwords.oldPassword, passwords.newPassword);
+              setPassMsg({ type: 'success', text: 'تم تغيير كلمة المرور بنجاح' });
+              setPasswords({ oldPassword: '', newPassword: '' });
+            } catch (e: any) {
+              setPassMsg({ type: 'error', text: e.message });
+            }
+          }} className="btn-primary !py-2 text-sm">تحديث كلمة المرور</button>
         </div>
 
         <button type="submit" className="btn-primary w-full text-lg">{saved ? '✓ تم الحفظ' : 'حفظ الإعدادات'}</button>
