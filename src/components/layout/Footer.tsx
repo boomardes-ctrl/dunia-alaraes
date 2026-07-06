@@ -30,8 +30,8 @@ export default function Footer({ settings }: Props) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-xl p-1.5">
-                <img src="/logo.png" alt={settings.siteName} className="w-full h-full object-contain" />
+              <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-xl p-2">
+                <img src="/logo.png" alt={settings.siteName} className="w-full h-full object-contain drop-shadow-sm" />
               </div>
               <h3 className="text-2xl font-black">{settings.siteName}</h3>
             </div>

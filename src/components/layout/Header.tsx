@@ -35,7 +35,7 @@ export default function Header({ settings }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className={`p-1 rounded-xl shadow-md transition-all ${scrolled ? 'bg-white' : 'bg-white/10 backdrop-blur-sm'}`}>
+            <div className={`p-1.5 rounded-xl shadow-md transition-all ${scrolled ? 'bg-white' : 'bg-white/30 backdrop-blur-md'}`}>
               <img
                 src={settings?.logo || '/logo.png'}
                 alt={settings?.siteName || 'دنيا العرائس'}

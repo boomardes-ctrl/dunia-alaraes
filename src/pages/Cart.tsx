@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft, Check, Send, User } from 'lucide-react';
+import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft, Check, Send, User, Copy, ExternalLink } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 import { api } from '../lib/api';
 import { CURRENCIES } from '../types';
@@ -29,6 +29,7 @@ export default function Cart() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<{ orderNumber: string; waUrl: string } | null>(null);
   const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,27 +70,46 @@ export default function Cart() {
   };
 
   if (done) {
+    const handleCopy = () => {
+      navigator.clipboard.writeText(done.orderNumber);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    };
     return (
       <div className="max-w-lg mx-auto px-4 pt-28 pb-16">
         <Helmet><title>تم الطلب - دنيا العرائس</title><meta name="description" content="تم إرسال طلبك بنجاح" /></Helmet>
         <div className="scale-in">
-          <div className="bg-gradient-to-br from-success/5 to-emerald-50 rounded-3xl p-8 md:p-10 text-center border border-success/10">
+          <div className="bg-gradient-to-br from-success/5 to-emerald-50 rounded-3xl p-6 md:p-10 text-center border border-success/10">
             <div className="w-20 h-20 bg-gradient-to-br from-success to-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-success/30">
               <Check size={40} className="text-white" />
             </div>
             <h2 className="text-3xl font-black mb-2">تم إرسال الطلب</h2>
-            <p className="text-text-light mb-6">رقم الطلب: <span className="font-black text-primary text-xl">{done.orderNumber}</span></p>
-            <p className="text-sm text-text-light mb-8">سيتم التواصل معك عبر واتساب لتأكيد الطلب ومناقشة التفاصيل</p>
+
+            <div className="bg-white rounded-2xl p-5 mb-6 border border-success/20">
+              <p className="text-text-light text-sm mb-2">رقم الطلب</p>
+              <div className="flex items-center justify-center gap-3">
+                <span className="font-black text-primary text-2xl">{done.orderNumber}</span>
+                <button onClick={handleCopy} className={`p-2 rounded-xl transition-all ${copied ? 'bg-success text-white' : 'bg-gray-100 text-gray-500 hover:bg-primary hover:text-white'}`} title="نسخ رقم الطلب">
+                  {copied ? <Check size={18} /> : <Copy size={18} />}
+                </button>
+              </div>
+              <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 text-right leading-relaxed">
+                <p className="font-bold mb-0.5">💡 لماذا أحفظ رقم الطلب؟</p>
+                <p>رقم الطلب هو الوسيلة الوحيدة لمتابعة حالة طلبك وتعديله لاحقاً. احتفظي به لحين استلام الطلب. يمكنك أيضاً نسخ الرابط المخصص للعودة لطلباتك لاحقاً.</p>
+              </div>
+            </div>
+
+            <p className="text-sm text-text-light mb-6">سيتم التواصل معك عبر واتساب لتأكيد الطلب ومناقشة التفاصيل</p>
             <a
               href={done.waUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-accent inline-flex items-center gap-3 mb-4 w-full justify-center text-lg py-4"
+              className="btn-accent inline-flex items-center gap-3 mb-3 w-full justify-center text-lg py-4"
             >
               <Send size={20} /> فتح واتساب
             </a>
-            <Link to={`/order/${done.orderNumber}`} className="block text-primary hover:text-primary-light font-bold transition-colors">
-              متابعة حالة الطلب
+            <Link to={`/order/${done.orderNumber}`} className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-primary/20 text-primary font-bold hover:bg-primary/5 transition-all">
+              <ExternalLink size={18} /> متابعة حالة الطلب
             </Link>
           </div>
         </div>
