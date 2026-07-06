@@ -64,8 +64,8 @@ export default function AdminOrders() {
       await load(search, filterStatus);
       showToast('success', 'تم تحديث الحالة');
       if (selectedOrder?.id === id) setSelectedOrder({ ...selectedOrder, status: newStatus });
-    } catch {
-      showToast('error', 'فشل تحديث الحالة');
+    } catch (err: any) {
+      showToast('error', err.message || 'فشل تحديث الحالة');
     } finally {
       setUpdating(null);
     }

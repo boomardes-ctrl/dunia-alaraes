@@ -20,9 +20,13 @@ export default function AdminSettings() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await api.updateSettings(form);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    try {
+      await api.updateSettings(form);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err: any) {
+      alert(err.message || 'حدث خطأ في حفظ الإعدادات');
+    }
   };
 
   const handleUpload = async (key: string, e: React.ChangeEvent<HTMLInputElement>) => {

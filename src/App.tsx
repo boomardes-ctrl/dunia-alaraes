@@ -19,6 +19,7 @@ import AdminOrders from './pages/admin/AdminOrders';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminChangePassword from './pages/admin/AdminChangePassword';
 import AdminBackup from './pages/admin/AdminBackup';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAdminStore((s) => s.isAuthenticated);
@@ -31,9 +32,10 @@ function App() {
   useEffect(() => { init(); }, [init]);
 
   return (
-    <HelmetProvider>
-      <BrowserRouter>
-        <Routes>
+      <HelmetProvider>
+        <BrowserRouter>
+          <ErrorBoundary>
+          <Routes>
           {/* Public routes */}
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
@@ -57,8 +59,9 @@ function App() {
             <Route path="backup" element={<AdminBackup />} />
           </Route>
         </Routes>
-      </BrowserRouter>
-    </HelmetProvider>
+          </ErrorBoundary>
+        </BrowserRouter>
+      </HelmetProvider>
   );
 }
 

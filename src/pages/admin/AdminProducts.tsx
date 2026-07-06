@@ -31,23 +31,27 @@ export default function AdminProducts() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const data = {
-      ...form,
-      price: Number(form.price),
-      oldPrice: form.oldPrice ? Number(form.oldPrice) : null,
-      categoryId: form.categoryId ? Number(form.categoryId) : null,
-      currency: form.currency,
-    };
-    if (editingId) {
-      await api.updateProduct(editingId, data);
-    } else {
-      await api.createProduct(data);
+    try {
+      const data = {
+        ...form,
+        price: Number(form.price),
+        oldPrice: form.oldPrice ? Number(form.oldPrice) : null,
+        categoryId: form.categoryId ? Number(form.categoryId) : null,
+        currency: form.currency,
+      };
+      if (editingId) {
+        await api.updateProduct(editingId, data);
+      } else {
+        await api.createProduct(data);
+      }
+      const updated = await api.getProducts();
+      setProducts(updated);
+      setShowForm(false);
+      setEditingId(null);
+      setForm(emptyForm);
+    } catch (err: any) {
+      alert(err.message || 'حدث خطأ');
     }
-    const updated = await api.getProducts();
-    setProducts(updated);
-    setShowForm(false);
-    setEditingId(null);
-    setForm(emptyForm);
   };
 
   const handleEdit = (p: Product) => {

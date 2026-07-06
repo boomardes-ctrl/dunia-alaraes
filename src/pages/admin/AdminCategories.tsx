@@ -19,17 +19,21 @@ export default function AdminCategories() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingId) {
-      await api.updateCategory(editingId, { name, nameEn, image });
-    } else {
-      await api.createCategory({ name, nameEn, image });
+    try {
+      if (editingId) {
+        await api.updateCategory(editingId, { name, nameEn, image });
+      } else {
+        await api.createCategory({ name, nameEn, image });
+      }
+      await load();
+      setShowForm(false);
+      setEditingId(null);
+      setName('');
+      setNameEn('');
+      setImage('');
+    } catch (err: any) {
+      alert(err.message || 'حدث خطأ');
     }
-    await load();
-    setShowForm(false);
-    setEditingId(null);
-    setName('');
-    setNameEn('');
-    setImage('');
   };
 
   const handleEdit = (c: Category) => {
