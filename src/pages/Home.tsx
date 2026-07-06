@@ -36,19 +36,19 @@ function GallerySlider({ images }: { images: string[] }) {
   return (
     <div className="relative w-full max-w-2xl mx-auto">
       <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-white/5"
+        style={{ aspectRatio: '4/3' }}
         onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
         onTouchEnd={(e) => {
           const diff = touchStartX.current - e.changedTouches[0].clientX;
           if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
         }}
       >
-        <div className="flex transition-all duration-500 ease-out relative" style={{ left: `-${current * 100}%` }}>
-          {images.map((url, i) => (
-            <div key={i} className="min-w-full flex-shrink-0">
-              <img src={url} alt="" className="w-full aspect-[4/3] object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
-            </div>
-          ))}
-        </div>
+        {images.map((url, i) => (
+          <div key={i} className="absolute inset-0 transition-transform duration-500 ease-out"
+            style={{ transform: `translateX(${(i - current) * 100}%)` }}>
+            <img src={url} alt="" className="w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
+          </div>
+        ))}
       </div>
       {images.length > 1 && (
         <div className="flex items-center justify-center gap-2 mt-3">
