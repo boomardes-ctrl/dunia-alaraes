@@ -82,13 +82,13 @@ export default function Home() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-12">
-            <div className={`flex-1 max-w-2xl transition-all duration-1000 ${heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-3 md:mb-6">
+            <div className={`flex-1 max-w-2xl flex flex-col gap-3 md:gap-6 transition-all duration-1000 ${heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2">
                 <Sparkles size={14} className="text-accent" />
                 <span className="text-white/80 text-xs md:text-sm font-medium">متجر العطور ومستحضرات التجميل</span>
               </div>
-              <img src="/name.png" alt={settings?.siteName || 'دنيا العرائس'} className="h-14 md:h-20 lg:h-28 w-auto mb-2 md:mb-5" />
-              <p className="text-sm md:text-xl text-white/70 mb-4 md:mb-10 leading-relaxed max-w-lg">
+              <img src="/name.png" alt={settings?.siteName || 'دنيا العرائس'} className="h-14 md:h-20 lg:h-28 w-auto" />
+              <p className="text-sm md:text-xl text-white/70 leading-relaxed max-w-lg">
                 {settings?.heroSubtitle || 'اكتشف عالم من الجمال والأناقة مع أحدث منتجات العطور ومستحضرات التجميل'}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
