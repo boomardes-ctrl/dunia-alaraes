@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Download, Upload, Copy, Check, AlertTriangle } from 'lucide-react';
-import { api } from '../../lib/api';
+import { Download, Copy, Check, AlertTriangle } from 'lucide-react';
 
 export default function AdminBackup() {
   const [loading, setLoading] = useState(false);
