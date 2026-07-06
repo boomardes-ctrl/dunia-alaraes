@@ -42,9 +42,9 @@ function GallerySlider({ images }: { images: string[] }) {
           if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
         }}
       >
-        <div className="flex transition-transform duration-500 ease-out" style={{ transform: `translateX(-${current * 100}%)` }}>
+        <div className="flex transition-all duration-500 ease-out relative" style={{ left: `-${current * 100}%` }}>
           {images.map((url, i) => (
-            <div key={i} className="min-w-full">
+            <div key={i} className="min-w-full flex-shrink-0">
               <img src={url} alt="" className="w-full aspect-[4/3] object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
             </div>
           ))}
