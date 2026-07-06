@@ -79,7 +79,7 @@ db.exec(`
 
 const adminExists = db.prepare('SELECT id FROM admins LIMIT 1').get();
 if (!adminExists) {
-  const hash = bcrypt.hashSync('admin123', 10);
+  const hash = bcrypt.hashSync('1234', 10);
   db.prepare('INSERT INTO admins (username, password) VALUES (?, ?)').run('admin', hash);
 }
 
