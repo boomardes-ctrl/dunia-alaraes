@@ -87,7 +87,6 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [offers, setOffers] = useState<Product[]>([]);
-  const [brands, setBrands] = useState<string[]>([]);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(true);
   const [heroRef, heroInView] = useInView();
@@ -100,13 +99,11 @@ export default function Home() {
       api.getProducts({ featured: '1' }),
       api.getProducts({ bestSeller: '1' }),
       api.getProducts({ hasOffer: '1' }),
-      api.getBrands(),
       api.getSettings(),
-    ]).then(([feat, best, offer, brs, sett]) => {
+    ]).then(([feat, best, offer, sett]) => {
       setProducts(feat);
       setBestSellers(best);
       setOffers(offer);
-      setBrands(brs);
       setSettings(sett);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
@@ -115,7 +112,7 @@ export default function Home() {
     <div>
       <Helmet><title>{settings?.siteName || 'دنيا العرائس'} - المتجر الأول للعطور والتجميل</title><meta name="description" content={settings?.siteDescription || 'متجر متخصص في بيع العطور ومستحضرات التجميل والإكسسوارات النسائية'} /></Helmet>
       {/* Hero Section */}
-      <section ref={heroRef} className="relative min-h-screen lg:min-h-[90vh] flex items-center bg-gradient-to-br from-primary via-primary-dark to-[#2D0A18]">
+      <section ref={heroRef} className="relative min-h-[80vh] flex items-center bg-gradient-to-br from-primary via-primary-dark to-[#2D0A18]">
         <div className="absolute inset-0 overflow-hidden">
           <div className="hero-glow bg-accent -top-20 -right-20" />
           <div className="hero-glow bg-pink-500 -bottom-20 -left-20" />
@@ -123,28 +120,23 @@ export default function Home() {
           <div className="absolute top-1/3 right-1/4 w-3 h-3 bg-accent/30 rounded-full animate-ping" style={{ animationDuration: '4s' }} />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full">
-          <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-12">
-            <div className={`flex-1 max-w-2xl transition-all duration-1000 ${heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-3 md:mb-6">
-                <Sparkles size={14} className="text-accent" />
-                <span className="text-white/80 text-xs md:text-sm font-medium">متجر العطور ومستحضرات التجميل</span>
-              </div>
-              <img src="/name.png" alt={settings?.siteName || 'دنيا العرائس'} className="h-14 md:h-20 lg:h-28 w-auto mb-2 md:mb-5" />
-              <p className="text-sm md:text-xl text-white/70 mb-4 md:mb-10 leading-relaxed max-w-lg">
-                {settings?.heroSubtitle || 'اكتشف عالم من الجمال والأناقة مع أحدث منتجات العطور ومستحضرات التجميل'}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <Link to="/products" className="bg-gradient-to-r from-accent to-accent-dark text-primary-dark font-black px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:shadow-2xl hover:shadow-accent/30 hover:scale-105 transition-all text-sm md:text-lg inline-flex items-center justify-center gap-3">
-                  تسوق الآن <ArrowLeft size={18} />
-                </Link>
-                <Link to="/products?hasOffer=1" className="glass text-white font-bold px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:bg-white/20 transition-all text-sm md:text-lg inline-flex items-center justify-center gap-3">
-                  <Tag size={16} /> العروض
-                </Link>
-              </div>
+          <div className={`max-w-2xl transition-all duration-1000 ${heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-3 md:mb-6">
+              <Sparkles size={14} className="text-accent" />
+              <span className="text-white/80 text-xs md:text-sm font-medium">متجر العطور ومستحضرات التجميل</span>
             </div>
-            {settings && settings.gallery && settings.gallery.length > 0 && (
-              <GallerySlider images={settings.gallery} />
-            )}
+            <img src="/name.png" alt={settings?.siteName || 'دنيا العرائس'} className="h-14 md:h-20 lg:h-28 w-auto mb-2 md:mb-5" />
+            <p className="text-sm md:text-xl text-white/70 mb-4 md:mb-10 leading-relaxed max-w-lg">
+              {settings?.heroSubtitle || 'اكتشف عالم من الجمال والأناقة مع أحدث منتجات العطور ومستحضرات التجميل'}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Link to="/products" className="bg-gradient-to-r from-accent to-accent-dark text-primary-dark font-black px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:shadow-2xl hover:shadow-accent/30 hover:scale-105 transition-all text-sm md:text-lg inline-flex items-center justify-center gap-3">
+                تسوق الآن <ArrowLeft size={18} />
+              </Link>
+              <Link to="/products?hasOffer=1" className="glass text-white font-bold px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:bg-white/20 transition-all text-sm md:text-lg inline-flex items-center justify-center gap-3">
+                <Tag size={16} /> العروض
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -194,22 +186,11 @@ export default function Home() {
         </section>
       )}
 
-      {/* Brands */}
-      {brands.length > 0 && (
-        <section className="bg-white py-16">
+      {/* Gallery */}
+      {settings && settings.gallery && settings.gallery.length > 0 && (
+        <section className="bg-white py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <SectionHeader title="الماركات" link="/products" />
-            <div className="flex flex-wrap gap-3">
-              {brands.map((brand) => (
-                <Link
-                  key={brand}
-                  to={`/products?brand=${encodeURIComponent(brand)}`}
-                  className="px-6 py-3 bg-gray-50 rounded-2xl hover:bg-gradient-to-r hover:from-primary hover:to-primary-light hover:text-white hover:shadow-xl hover:scale-105 transition-all font-bold text-sm border border-gray-100"
-                >
-                  {brand}
-                </Link>
-              ))}
-            </div>
+            <GallerySlider images={settings.gallery} />
           </div>
         </section>
       )}
