@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Sparkles, TrendingUp, Tag, Star, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sparkles, TrendingUp, Tag, Star, ArrowLeft } from 'lucide-react';
 import { api } from '../lib/api';
 import type { Product, Settings } from '../types';
 import ProductGrid from '../components/products/ProductGrid';
@@ -56,7 +56,7 @@ function GallerySlider({ images }: { images: string[] }) {
   }, [current, goTo]);
 
   return (
-    <div className="relative w-full lg:w-[400px] shrink-0 order-last lg:order-first group">
+    <div className="relative w-full lg:w-[400px] shrink-0">
       <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-white/5"
         onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
         onTouchEnd={(e) => {
@@ -71,12 +71,6 @@ function GallerySlider({ images }: { images: string[] }) {
             </div>
           ))}
         </div>
-        {images.length > 1 && (
-          <>
-            <button onClick={() => goTo(current - 1)} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/30 backdrop-blur rounded-xl text-white hover:bg-white/50 transition-all opacity-0 group-hover:opacity-100"><ChevronRight size={20} /></button>
-            <button onClick={() => goTo(current + 1)} className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/30 backdrop-blur rounded-xl text-white hover:bg-white/50 transition-all opacity-0 group-hover:opacity-100"><ChevronLeft size={20} /></button>
-          </>
-        )}
       </div>
       {images.length > 1 && (
         <div className="flex items-center justify-center gap-2 mt-3">
@@ -164,8 +158,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-{/* Categories removed from homepage */}
 
       {/* Featured Products */}
       {products.length > 0 && (
