@@ -112,7 +112,7 @@ export default function Home() {
     <div>
       <Helmet><title>{settings?.siteName || 'دنيا العرائس'} - المتجر الأول للعطور والتجميل</title><meta name="description" content={settings?.siteDescription || 'متجر متخصص في بيع العطور ومستحضرات التجميل والإكسسوارات النسائية'} /></Helmet>
       {/* Hero Section */}
-      <section ref={heroRef} className="relative py-10 md:py-20 bg-gradient-to-br from-primary via-primary-dark to-[#2D0A18]">
+      <section ref={heroRef} className="relative py-12 lg:py-0 lg:min-h-screen lg:flex lg:items-center bg-gradient-to-br from-primary via-primary-dark to-[#2D0A18]">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="hero-glow bg-accent -top-20 -right-20" />
           <div className="hero-glow bg-pink-500 -bottom-20 -left-20" />
@@ -148,7 +148,7 @@ export default function Home() {
 
       {/* Featured Products */}
       {products.length > 0 && (
-        <section ref={featRef} className="bg-white py-16 md:py-24">
+        <section ref={featRef} className="bg-white py-10 md:py-16">
           <div className={`max-w-7xl mx-auto px-4 sm:px-6 transition-all duration-700 ${featInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <SectionHeader title="المنتجات المميزة" link="/products" icon={Star} />
             <ProductGrid products={products} loading={loading} />
@@ -158,7 +158,7 @@ export default function Home() {
 
       {/* Best Sellers */}
       {bestSellers.length > 0 && (
-        <section ref={bestRef} className="py-16 md:py-24">
+        <section ref={bestRef} className="py-10 md:py-16">
           <div className={`max-w-7xl mx-auto px-4 sm:px-6 transition-all duration-700 ${bestInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <SectionHeader title="الأكثر مبيعاً" link="/products?bestSeller=1" icon={TrendingUp} />
             <ProductGrid products={bestSellers} />
@@ -168,7 +168,7 @@ export default function Home() {
 
       {/* Offers Banner & Products */}
       {offers.length > 0 && (
-        <section ref={offersRef} className="py-16 md:py-24">
+        <section ref={offersRef} className="py-10 md:py-16">
           <div className={`max-w-7xl mx-auto px-4 sm:px-6 transition-all duration-700 ${offersInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="bg-gradient-to-br from-error/5 via-error/10 to-primary/5 rounded-3xl p-8 md:p-12 mb-10 relative overflow-hidden">
               <div className="absolute -top-20 -right-20 w-60 h-60 bg-error/10 rounded-full blur-3xl" />
