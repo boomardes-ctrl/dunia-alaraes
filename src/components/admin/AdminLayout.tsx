@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, Tags, ShoppingCart, Settings, KeyRound, LogOut, Menu, X, Store, Shield } from 'lucide-react';
+import { LayoutDashboard, Package, Tags, ShoppingCart, Settings, KeyRound, LogOut, Menu, X, Store, Shield, Download } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
 
 const mainLinks = [
@@ -16,6 +16,7 @@ const contentLinks = [
 const settingsLinks = [
   { path: '/admin/settings', label: 'إعدادات الموقع', icon: Settings },
   { path: '/admin/change-password', label: 'كلمة المرور', icon: KeyRound },
+  { path: '/admin/backup', label: 'النسخ الاحتياطي', icon: Download },
 ];
 
 export default function AdminLayout() {

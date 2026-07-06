@@ -18,6 +18,7 @@ import AdminCategories from './pages/admin/AdminCategories';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminChangePassword from './pages/admin/AdminChangePassword';
+import AdminBackup from './pages/admin/AdminBackup';
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAdminStore((s) => s.isAuthenticated);
@@ -53,6 +54,7 @@ function App() {
             <Route path="orders" element={<AdminOrders />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="change-password" element={<AdminChangePassword />} />
+            <Route path="backup" element={<AdminBackup />} />
           </Route>
         </Routes>
       </BrowserRouter>
