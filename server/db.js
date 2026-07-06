@@ -51,6 +51,8 @@ db.exec(`
     notes TEXT DEFAULT '',
     items TEXT NOT NULL,
     total REAL NOT NULL,
+    totalSar REAL DEFAULT 0,
+    totalYer REAL DEFAULT 0,
     status TEXT DEFAULT 'جديد',
     createdAt TEXT DEFAULT (datetime('now')),
     updatedAt TEXT DEFAULT (datetime('now'))

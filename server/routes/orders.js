@@ -35,8 +35,8 @@ router.post('/', (req, res) => {
   const { customerName, customerPhone, city, address, notes, items, total, totalSar, totalYer, whatsappNumber, frontendUrl } = req.body;
   const orderNumber = generateOrderNumber();
   const token = generateToken();
-  db.prepare("ALTER TABLE orders ADD COLUMN totalSar REAL DEFAULT 0").catch(() => {});
-  db.prepare("ALTER TABLE orders ADD COLUMN totalYer REAL DEFAULT 0").catch(() => {});
+  try { db.prepare("ALTER TABLE orders ADD COLUMN totalSar REAL DEFAULT 0").run(); } catch {}
+  try { db.prepare("ALTER TABLE orders ADD COLUMN totalYer REAL DEFAULT 0").run(); } catch {}
   const result = db.prepare(`INSERT INTO orders (orderNumber, token, customerName, customerPhone, city, address, notes, items, total, totalSar, totalYer)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(orderNumber, token, customerName, customerPhone, city, address || '', notes || '', JSON.stringify(items), total, totalSar || 0, totalYer || 0);
   const origin = frontendUrl || req.headers.origin || `${req.protocol}://${req.get('host')}`;
