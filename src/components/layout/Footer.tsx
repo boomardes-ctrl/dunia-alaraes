@@ -1,4 +1,4 @@
-import { Phone, Mail, MapPin, Heart, Settings } from 'lucide-react';
+import { Phone, Mail, MapPin, Settings } from 'lucide-react';
 import type { Settings as SiteSettings } from '../../types';
 import { SOCIAL_PLATFORMS } from '../../types';
 
@@ -30,8 +30,8 @@ export default function Footer({ settings }: Props) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-2xl flex items-center justify-center shadow-xl">
-                <Heart size={22} className="text-white" />
+              <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-xl p-1.5">
+                <img src="/logo.png" alt={settings.siteName} className="w-full h-full object-contain" />
               </div>
               <h3 className="text-2xl font-black">{settings.siteName}</h3>
             </div>

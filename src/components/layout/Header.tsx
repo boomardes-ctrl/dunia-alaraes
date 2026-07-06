@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Heart, Search, Menu, X, Sparkles, Settings, Tag } from 'lucide-react';
+import { ShoppingCart, Heart, Search, Menu, X, Settings, Tag } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import type { Settings as SiteSettings } from '../../types';
 import SearchBar from '../products/SearchBar';
@@ -35,15 +35,13 @@ export default function Header({ settings }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-3 group">
-            {settings?.logo ? (
-              <div className="p-1 bg-white rounded-xl shadow-md">
-                <img src={settings.logo} alt={settings.siteName} className="h-9 w-auto" />
-              </div>
-            ) : (
-              <div className="w-10 h-10 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all group-hover:scale-110">
-                <Sparkles size={20} className="text-white" />
-              </div>
-            )}
+            <div className={`p-1 rounded-xl shadow-md transition-all ${scrolled ? 'bg-white' : 'bg-white/10 backdrop-blur-sm'}`}>
+              <img
+                src={settings?.logo || '/logo.png'}
+                alt={settings?.siteName || 'دنيا العرائس'}
+                className="h-9 w-auto"
+              />
+            </div>
             <span className={`text-2xl font-black tracking-tight transition-colors ${logoColor}`}>
               {settings?.siteName || 'دنيا العرائس'}
             </span>

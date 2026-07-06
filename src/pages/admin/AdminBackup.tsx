@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Download, Copy, Check, AlertTriangle } from 'lucide-react';
+import { Download, Copy, Check, AlertTriangle, Upload, Loader } from 'lucide-react';
 
 export default function AdminBackup() {
   const [loading, setLoading] = useState(false);
@@ -8,6 +8,7 @@ export default function AdminBackup() {
   const [pastedCode, setPastedCode] = useState('');
   const [showPaste, setShowPaste] = useState(false);
   const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [confirmFile, setConfirmFile] = useState<File | null>(null);
 
   const handleDownload = async () => {
     setLoading(true);
@@ -63,12 +64,13 @@ export default function AdminBackup() {
     setLoading(false);
   };
 
-  const handleFileRestore = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileRestore = async () => {
+    if (!confirmFile) return;
     setLoading(true);
+    setMsg(null);
+    setConfirmFile(null);
     try {
-      const text = await file.text();
+      const text = await confirmFile.text();
       const data = JSON.parse(text);
       const token = localStorage.getItem('admin_token');
       const res = await fetch('/api/backup/restore', {
@@ -79,7 +81,6 @@ export default function AdminBackup() {
       const result = await res.json();
       if (res.ok) {
         setMsg({ type: 'success', text: result.message || 'تمت الاستعادة' });
-        e.target.value = '';
       } else throw new Error(result.error);
     } catch (e: any) { setMsg({ type: 'error', text: e.message || 'ملف غير صالح' }); }
     setLoading(false);
@@ -101,10 +102,17 @@ export default function AdminBackup() {
         </div>
       )}
 
+      {loading && (
+        <div className="flex items-center justify-center gap-3 p-4 bg-blue-50 text-blue-700 rounded-2xl mb-6 text-sm font-bold">
+          <Loader size={18} className="animate-spin" />
+          جاري معالجة البيانات...
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <button onClick={handleDownload} disabled={loading} className="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg hover:border-primary/20 transition-all text-right flex items-center gap-4">
           <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shrink-0">
-            <Download size={24} />
+            {loading ? <Loader size={24} className="animate-spin" /> : <Download size={24} />}
           </div>
           <div>
             <p className="font-bold text-sm">تحميل نسخة</p>
@@ -128,8 +136,27 @@ export default function AdminBackup() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-bold mb-2">رفع ملف JSON</label>
-            <input type="file" accept=".json" onChange={handleFileRestore} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-primary file:text-white hover:file:bg-primary/90 transition-all cursor-pointer" />
+            <input type="file" accept=".json" onChange={(e) => setConfirmFile(e.target.files?.[0] || null)} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-primary file:text-white hover:file:bg-primary/90 transition-all cursor-pointer disabled:opacity-50" disabled={loading} />
           </div>
+          {confirmFile && !loading && (
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-3">
+              <div className="flex items-start gap-3">
+                <AlertTriangle size={20} className="text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-bold text-amber-800">تأكيد استعادة البيانات</p>
+                  <p className="text-xs text-amber-700 mt-1">سيتم استبدال جميع البيانات الحالية (المنتجات، الأقسام، الطلبات، الإعدادات) بالبيانات الموجودة في الملف. هذا الإجراء لا يمكن التراجع عنه.</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={handleFileRestore} className="btn-primary text-sm flex-1 flex items-center justify-center gap-2">
+                  <Upload size={16} /> تأكيد الاستعادة
+                </button>
+                <button onClick={() => setConfirmFile(null)} className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold hover:bg-gray-50 transition-all">
+                  إلغاء
+                </button>
+              </div>
+            </div>
+          )}
           <div className="border-t border-gray-100 pt-4">
             <button onClick={() => setShowPaste(!showPaste)} className="text-sm font-bold text-primary hover:text-primary-light transition-all">
               {showPaste ? 'إلغاء' : 'أو لصق الكود'}
@@ -143,8 +170,8 @@ export default function AdminBackup() {
                   className="input-field h-32 text-xs font-mono"
                   dir="ltr"
                 />
-                <button onClick={handleRestore} disabled={loading} className="btn-primary text-sm">
-                  {loading ? 'جاري...' : 'استعادة'}
+                <button onClick={handleRestore} disabled={loading || !pastedCode.trim()} className="btn-primary text-sm flex items-center justify-center gap-2">
+                  {loading ? <><Loader size={16} className="animate-spin" /> جاري...</> : <><Upload size={16} /> استعادة</>}
                 </button>
               </div>
             )}
@@ -157,7 +184,7 @@ export default function AdminBackup() {
           <AlertTriangle size={20} className="text-amber-600 shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-bold text-amber-800">نصيحة</p>
-            <p className="text-xs text-amber-700 mt-1">خذ نسخة احتياطية قبل أي إعادة نشر للموقع. الصور المخزنة على Cloudinary تبقى آمنة.</p>
+            <p className="text-xs text-amber-700 mt-1">خذ نسخة احتياطية قبل أي إعادة نشر للموقع. النسخة الآن تشمل الصور أيضاً.</p>
           </div>
         </div>
       </div>

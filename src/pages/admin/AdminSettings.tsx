@@ -55,10 +55,10 @@ export default function AdminSettings() {
     <div>
       <Helmet><title>إعدادات الموقع - دنيا العرائس</title></Helmet>
       <h1 className="text-2xl font-black mb-6">إعدادات الموقع</h1>
-      <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 space-y-4">
           <h2 className="font-bold text-lg">معلومات الموقع</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-text-light mb-1">اسم الموقع</label>
               <input value={form.siteName} onChange={(e) => setForm({ ...form, siteName: e.target.value })} className="input-field" />
@@ -86,9 +86,9 @@ export default function AdminSettings() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 space-y-4">
+        <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 space-y-4">
           <h2 className="font-bold text-lg">المظهر</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-text-light mb-1">اللون الأساسي</label>
               <input type="color" value={form.primaryColor} onChange={(e) => setForm({ ...form, primaryColor: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" />
@@ -106,15 +106,15 @@ export default function AdminSettings() {
             <label className="block text-xs font-bold text-text-light mb-1">نص الهيرو</label>
             <input value={form.heroSubtitle} onChange={(e) => setForm({ ...form, heroSubtitle: e.target.value })} className="input-field" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
               <label className="block text-xs font-bold text-text-light mb-1">الشعار</label>
-              <input type="file" accept="image/*" onChange={(e) => handleUpload('logo', e)} className="text-sm" />
+              <input type="file" accept="image/*" onChange={(e) => handleUpload('logo', e)} className="block w-full text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-primary file:text-white hover:file:bg-primary/90 transition-all cursor-pointer" />
               {form.logo && <img src={form.logo} alt="logo" className="w-20 h-20 object-cover rounded-xl mt-2" />}
             </div>
-            <div>
+            <div className="space-y-1">
               <label className="block text-xs font-bold text-text-light mb-1">صورة الهيرو</label>
-              <input type="file" accept="image/*" onChange={(e) => handleUpload('heroImage', e)} className="text-sm" />
+              <input type="file" accept="image/*" onChange={(e) => handleUpload('heroImage', e)} className="block w-full text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-primary file:text-white hover:file:bg-primary/90 transition-all cursor-pointer" />
               {form.heroImage && <img src={form.heroImage} alt="hero" className="w-20 h-20 object-cover rounded-xl mt-2" />}
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function AdminSettings() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 space-y-4">
+        <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 space-y-4">
           <h2 className="font-bold text-lg">العملة</h2>
           <div>
             <label className="block text-xs font-bold text-text-light mb-1">سعر الصرف (ريال يمني لكل ريال سعودي)</label>
@@ -132,7 +132,7 @@ export default function AdminSettings() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 space-y-4">
+        <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-bold text-lg">روابط التواصل الاجتماعي</h2>
             <button type="button" onClick={addSocial} className="btn-primary !py-1.5 !px-3 text-xs flex items-center gap-1">
@@ -144,15 +144,19 @@ export default function AdminSettings() {
           )}
           <div className="space-y-3">
             {form.socialLinks.map((link, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                <GripVertical size={16} className="text-gray-300 flex-shrink-0" />
-                <select value={link.platform} onChange={(e) => updateSocial(i, { platform: e.target.value })} className="input-field !py-2 text-sm w-36 flex-shrink-0">
-                  {Object.entries(SOCIAL_PLATFORMS).map(([key, val]) => (
-                    <option key={key} value={key} disabled={key !== link.platform && form.socialLinks.some(l => l.platform === key)}>{val.label}</option>
-                  ))}
-                </select>
-                <input value={link.url} onChange={(e) => updateSocial(i, { url: e.target.value })} placeholder="رابط المنصة" className="input-field !py-2 text-sm flex-1" dir="ltr" />
-                <button type="button" onClick={() => removeSocial(i)} className="p-1.5 hover:bg-red-50 text-red-400 rounded-lg transition-all"><X size={16} /></button>
+              <div key={i} className="flex flex-col md:flex-row items-stretch md:items-center gap-2 p-3 bg-gray-50 rounded-xl">
+                <div className="flex items-center gap-2">
+                  <GripVertical size={16} className="text-gray-300 flex-shrink-0" />
+                  <select value={link.platform} onChange={(e) => updateSocial(i, { platform: e.target.value })} className="input-field !py-2 text-sm flex-1 md:w-36">
+                    {Object.entries(SOCIAL_PLATFORMS).map(([key, val]) => (
+                      <option key={key} value={key} disabled={key !== link.platform && form.socialLinks.some(l => l.platform === key)}>{val.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-center gap-2 flex-1">
+                  <input value={link.url} onChange={(e) => updateSocial(i, { url: e.target.value })} placeholder="رابط المنصة" className="input-field !py-2 text-sm flex-1" dir="ltr" />
+                  <button type="button" onClick={() => removeSocial(i)} className="p-1.5 hover:bg-red-50 text-red-400 rounded-lg transition-all flex-shrink-0"><X size={16} /></button>
+                </div>
               </div>
             ))}
           </div>
