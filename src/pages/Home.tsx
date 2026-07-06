@@ -73,7 +73,7 @@ export default function Home() {
     <div>
       <Helmet><title>{settings?.siteName || 'دنيا العرائس'} - المتجر الأول للعطور والتجميل</title><meta name="description" content={settings?.siteDescription || 'متجر متخصص في بيع العطور ومستحضرات التجميل والإكسسوارات النسائية'} /></Helmet>
       {/* Hero Section */}
-      <section ref={heroRef} className="relative py-12 lg:py-0 lg:min-h-screen lg:flex lg:items-center bg-gradient-to-br from-primary via-primary-dark to-[#2D0A18]">
+      <section ref={heroRef} className="relative pt-16 lg:pt-0 lg:min-h-screen lg:flex lg:items-center pb-12 lg:pb-0 bg-gradient-to-br from-primary via-primary-dark to-[#2D0A18]">
         <div className="absolute inset-0 overflow-hidden">
           <div className="hero-glow bg-accent -top-20 -right-20" />
           <div className="hero-glow bg-pink-500 -bottom-20 -left-20" />
@@ -82,12 +82,14 @@ export default function Home() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-12">
-            <div className={`flex-1 max-w-2xl flex flex-col gap-3 md:gap-6 transition-all duration-1000 ${heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className={`flex-1 max-w-2xl flex flex-col gap-3 md:gap-6 items-start transition-all duration-1000 ${heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2">
                 <Sparkles size={14} className="text-accent" />
                 <span className="text-white/80 text-xs md:text-sm font-medium">متجر العطور ومستحضرات التجميل</span>
               </div>
-              <img src="/name.png" alt={settings?.siteName || 'دنيا العرائس'} className="h-14 md:h-20 lg:h-28 w-auto" />
+              <div className="bg-white rounded-xl p-3 md:p-4">
+                <img src="/name.png" alt={settings?.siteName || 'دنيا العرائس'} className="h-12 md:h-16 lg:h-24 w-auto block" />
+              </div>
               <p className="text-sm md:text-xl text-white/70 leading-relaxed max-w-lg">
                 {settings?.heroSubtitle || 'اكتشف عالم من الجمال والأناقة مع أحدث منتجات العطور ومستحضرات التجميل'}
               </p>
