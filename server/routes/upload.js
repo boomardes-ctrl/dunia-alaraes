@@ -19,6 +19,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET || '',
 });
 
+const IMGBB_API_KEY = process.env.IMGBB_API_KEY || '9118c0de4584627875d554d0c1c8e12d';
+
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
@@ -59,13 +61,30 @@ router.post('/', upload.single('file'), async (req, res) => {
     }
   }
 
-  // Save to DB as base64
+  // ImgBB
+  if (IMGBB_API_KEY) {
+    try {
+      const base64 = req.file.buffer.toString('base64');
+      const resp = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ image: base64 }),
+      });
+      const result = await resp.json();
+      if (result && result.data && result.data.url) {
+        return res.json({ url: result.data.url });
+      }
+    } catch (err) {
+      // imgbb failed, fall through
+    }
+  }
+
+  // Fallback: Save to DB as base64
   const mediaId = uuidv4();
   const base64 = req.file.buffer.toString('base64');
   const mime = req.file.mimetype;
   db.prepare('INSERT INTO media (id, data, mime) VALUES (?, ?, ?)').run(mediaId, base64, mime);
 
-  // Also save locally as fallback
   if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
   const filename = `${mediaId}${extname(req.file.originalname)}`;
   fs.writeFileSync(join(uploadsDir, filename), req.file.buffer);
