@@ -135,9 +135,7 @@ function Gallery({ images }: { images: string[] }) {
                 <Sparkles size={14} className="text-accent" />
                 <span className="text-white/80 text-xs md:text-sm font-medium">متجر العطور ومستحضرات التجميل</span>
               </div>
-              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-tight mb-4 md:mb-6">
-                {settings?.heroTitle || 'دنيا العرائس'}
-              </h1>
+              <img src="/name.png" alt={settings?.siteName || 'دنيا العرائس'} className="h-16 md:h-24 lg:h-32 w-auto mb-4 md:mb-6" />
               <p className="text-base md:text-xl text-white/70 mb-8 md:mb-10 leading-relaxed max-w-lg">
                 {settings?.heroSubtitle || 'اكتشف عالم من الجمال والأناقة مع أحدث منتجات العطور ومستحضرات التجميل'}
               </p>

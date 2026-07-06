@@ -26,8 +26,6 @@ export default function Header({ settings }: Props) {
 
   const textColor = scrolled ? 'text-gray-700 hover:text-primary' : 'text-white/90 hover:text-white';
   const iconColor = scrolled ? 'hover:bg-gray-100 text-gray-700' : 'hover:bg-white/10 text-white';
-  const logoColor = scrolled ? 'text-primary' : 'text-white';
-
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
       scrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg' : 'bg-transparent'
@@ -42,9 +40,7 @@ export default function Header({ settings }: Props) {
                 className="h-9 w-auto"
               />
             </div>
-            <span className={`text-2xl font-black tracking-tight transition-colors ${logoColor}`}>
-              {settings?.siteName || 'دنيا العرائس'}
-            </span>
+            <img src="/name.png" alt={settings?.siteName || 'دنيا العرائس'} className="h-9 w-auto" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
