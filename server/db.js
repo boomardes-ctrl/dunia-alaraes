@@ -77,10 +77,13 @@ db.exec(`
   );
 `);
 
-const adminExists = db.prepare('SELECT id FROM admins LIMIT 1').get();
-if (!adminExists) {
+const admin = db.prepare('SELECT * FROM admins WHERE id = 1').get();
+if (!admin) {
   const hash = bcrypt.hashSync('1234', 10);
   db.prepare('INSERT INTO admins (username, password) VALUES (?, ?)').run('admin', hash);
+} else if (bcrypt.compareSync('admin123', admin.password)) {
+  const hash = bcrypt.hashSync('1234', 10);
+  db.prepare('UPDATE admins SET password = ? WHERE id = 1').run(hash);
 }
 
 const defaultSettings = {
