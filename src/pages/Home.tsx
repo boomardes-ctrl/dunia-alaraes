@@ -100,7 +100,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link to="/products" className="bg-gradient-to-r from-accent to-accent-dark text-primary-dark font-black px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:shadow-2xl hover:shadow-accent/30 hover:scale-105 transition-all text-base md:text-lg inline-flex items-center justify-center gap-3">
-                تسوقي الآن <ArrowLeft size={18} />
+                تسوق الآن <ArrowLeft size={18} />
               </Link>
               <Link to="/products?hasOffer=1" className="glass text-white font-bold px-6 py-3.5 md:px-8 md:py-4 rounded-2xl hover:bg-white/20 transition-all text-base md:text-lg inline-flex items-center justify-center gap-3">
                 <Tag size={16} /> العروض
@@ -182,7 +182,7 @@ export default function Home() {
                   <p className="text-text-light">لا تفوتي الفرصة! عروض وخصومات على منتجات مختارة</p>
                 </div>
                 <Link to="/products?hasOffer=1" className="btn-primary shrink-0">
-                  تسوقي العروض
+                  تسوق العروض
                 </Link>
               </div>
             </div>

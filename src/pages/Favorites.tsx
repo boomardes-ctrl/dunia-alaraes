@@ -31,7 +31,7 @@ export default function Favorites() {
           <Heart size={48} className="text-pink-400" />
         </div>
         <h2 className="text-3xl font-black mb-2">المفضلة فارغة</h2>
-        <p className="text-text-light mb-8">أضيفي منتجاتك المفضلة هنا</p>
+        <p className="text-text-light mb-8">أضف منتجاتك المفضلة هنا</p>
         <Link to="/products" className="btn-primary inline-flex items-center gap-3 text-lg px-10 py-4">
           <ArrowLeft size={20} /> تصفح المنتجات
         </Link>

@@ -95,7 +95,7 @@ export default function Cart() {
               </div>
               <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 text-right leading-relaxed">
                 <p className="font-bold mb-0.5">💡 لماذا أحفظ رقم الطلب؟</p>
-                <p>رقم الطلب هو الوسيلة الوحيدة لمتابعة حالة طلبك وتعديله لاحقاً. احتفظي به لحين استلام الطلب. يمكنك أيضاً نسخ الرابط المخصص للعودة لطلباتك لاحقاً.</p>
+                <p>رقم الطلب هو الوسيلة الوحيدة لمتابعة حالة طلبك وتعديله لاحقاً. احتفظ به لحين استلام الطلب. يمكنك أيضاً نسخ الرابط المخصص للعودة لطلباتك لاحقاً.</p>
               </div>
             </div>
 
@@ -125,9 +125,9 @@ export default function Cart() {
           <ShoppingBag size={48} className="text-gray-400" />
         </div>
         <h2 className="text-3xl font-black mb-2">السلة فارغة</h2>
-        <p className="text-text-light mb-8">أضيفي بعض المنتجات الجميلة إلى سلتك</p>
+        <p className="text-text-light mb-8">أضف بعض المنتجات الجميلة إلى سلتك</p>
         <Link to="/products" className="btn-primary inline-flex items-center gap-3 text-lg px-10 py-4">
-          <ArrowLeft size={20} /> تسوقي الآن
+          <ArrowLeft size={20} /> تسوق الآن
         </Link>
       </div>
     );

@@ -107,7 +107,7 @@ export default function OrderStatus() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-28 pb-16">
-      <Helmet><title>متابعة الطلب - دنيا العرائس</title><meta name="description" content="تابعي حالة طلبك" /></Helmet>
+      <Helmet><title>متابعة الطلب - دنيا العرائس</title><meta name="description" content="تابع حالة طلبك" /></Helmet>
       <div className="max-w-lg mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
@@ -115,7 +115,7 @@ export default function OrderStatus() {
             <ShoppingBag size={36} className="text-primary" />
           </div>
           <h1 className="text-3xl md:text-4xl font-black mb-2">متابعة الطلب</h1>
-          <p className="text-text-light">أدخلي رقم الطلب لمتابعة حالته أو تعديله</p>
+          <p className="text-text-light">أدخل رقم الطلب لمتابعة حالته أو تعديله</p>
         </div>
 
         {/* Search */}
@@ -164,7 +164,7 @@ export default function OrderStatus() {
               </div>
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 leading-relaxed mb-4">
                 <p className="font-bold mb-0.5">💡 نصيحة</p>
-                <p>احتفظي برقم الطلب لمتابعة حالتك. يمكنك أيضاً نسخ الرابط الخاص للعودة إليه لاحقاً.</p>
+                <p>احتفظ برقم الطلب لمتابعة حالتك. يمكنك أيضاً نسخ الرابط الخاص للعودة إليه لاحقاً.</p>
               </div>
               <div className="grid grid-cols-2 gap-3 p-4 bg-gray-50 rounded-2xl text-sm">
                 <div className="flex items-center gap-2">
@@ -230,7 +230,7 @@ export default function OrderStatus() {
                 </Link>
               )}
               <p className="text-center text-xs text-text-light leading-relaxed">
-                للتعديل على الطلب، تواصلي معنا عبر واتساب وسنقوم بالتعديل
+                للتعديل على الطلب، تواصل معنا عبر واتساب وسنقوم بالتعديل
               </p>
             </div>
           </div>
