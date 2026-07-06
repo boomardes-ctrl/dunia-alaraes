@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { fileURLToPath } from 'url';
 import { dirname, join, extname } from 'path';
 import fs from 'fs';
+import db from '../db.js';
 import { JWT_SECRET } from './admin.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -58,11 +59,18 @@ router.post('/', upload.single('file'), async (req, res) => {
     }
   }
 
-  // Local fallback
+  // Save to DB as base64
+  const mediaId = uuidv4();
+  const base64 = req.file.buffer.toString('base64');
+  const mime = req.file.mimetype;
+  db.prepare('INSERT INTO media (id, data, mime) VALUES (?, ?, ?)').run(mediaId, base64, mime);
+
+  // Also save locally as fallback
   if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
-  const filename = `${uuidv4()}${extname(req.file.originalname)}`;
+  const filename = `${mediaId}${extname(req.file.originalname)}`;
   fs.writeFileSync(join(uploadsDir, filename), req.file.buffer);
-  res.json({ url: `/uploads/${filename}` });
+
+  res.json({ url: `/api/media/${mediaId}`, mediaId });
 });
 
 export default router;

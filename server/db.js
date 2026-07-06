@@ -68,6 +68,13 @@ db.exec(`
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS media (
+    id TEXT PRIMARY KEY,
+    data TEXT NOT NULL,
+    mime TEXT DEFAULT 'image/jpeg',
+    createdAt TEXT DEFAULT (datetime('now'))
+  );
 `);
 
 const adminExists = db.prepare('SELECT id FROM admins LIMIT 1').get();

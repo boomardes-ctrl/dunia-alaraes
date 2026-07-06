@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import db from './db.js';
 import productsRouter from './routes/products.js';
 import categoriesRouter from './routes/categories.js';
 import ordersRouter from './routes/orders.js';
@@ -29,6 +30,14 @@ app.use('/api/admin', adminRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/backup', backupRouter);
+
+app.get('/api/media/:id', (req, res) => {
+  const row = db.prepare('SELECT data, mime FROM media WHERE id = ?').get(req.params.id);
+  if (!row) return res.status(404).json({ error: 'الصورة غير موجودة' });
+  const img = Buffer.from(row.data, 'base64');
+  res.writeHead(200, { 'Content-Type': row.mime, 'Content-Length': img.length, 'Cache-Control': 'public, max-age=86400' });
+  res.end(img);
+});
 
 if (isProd) {
   app.use(express.static(join(__dirname, '..', 'dist')));

@@ -25,13 +25,16 @@ router.get('/', auth, (req, res) => {
   settingsRows.forEach(r => { settings[r.key] = r.value; });
   try { settings.socialLinks = JSON.parse(settings.socialLinks || '[]'); } catch { settings.socialLinks = []; }
 
+  const media = db.prepare('SELECT * FROM media').all();
+
   res.json({
-    version: 1,
+    version: 2,
     createdAt: new Date().toISOString(),
     products: products.map(p => ({ ...p, images: JSON.parse(p.images || '[]') })),
     categories,
     orders: orders.map(o => ({ ...o, items: JSON.parse(o.items || '[]') })),
     settings,
+    media,
   });
 });
 
@@ -72,9 +75,17 @@ router.post('/restore', auth, (req, res) => {
       for (const [key, value] of Object.entries(data.settings)) {
         upsertSetting.run(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
       }
+
+      if (data.media && data.media.length > 0) {
+        db.exec('DELETE FROM media');
+        const insMedia = db.prepare('INSERT OR REPLACE INTO media (id, data, mime, createdAt) VALUES (?, ?, ?, ?)');
+        for (const m of data.media) {
+          insMedia.run(m.id, m.data || '', m.mime || 'image/jpeg', m.createdAt || new Date().toISOString());
+        }
+      }
     });
     trx();
-    res.json({ message: `تمت استعادة ${data.products.length} منتج و ${data.categories.length} قسم` });
+    res.json({ message: `تمت استعادة ${data.products.length} منتج و ${data.categories.length} قسم و ${(data.media || []).length} صورة` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
