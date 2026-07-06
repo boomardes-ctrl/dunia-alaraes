@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Heart, Search, Menu, X, Settings, Tag } from 'lucide-react';
+import { ShoppingCart, Heart, Search, Menu, X, Settings, Tag, ClipboardList } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import type { Settings as SiteSettings } from '../../types';
 import SearchBar from '../products/SearchBar';
@@ -58,6 +58,10 @@ export default function Header({ settings }: Props) {
               <Tag size={14} className="text-accent" />
               العروض
             </Link>
+            <Link to="/order" className={`relative font-semibold transition-all hover:scale-105 ${textColor} flex items-center gap-1.5`}>
+              <ClipboardList size={14} />
+              متابعة طلبي
+            </Link>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -107,6 +111,7 @@ export default function Header({ settings }: Props) {
                 { to: '/', label: 'الرئيسية' },
                 { to: '/products', label: 'المنتجات' },
                 { to: '/products?hasOffer=1', label: 'العروض' },
+                { to: '/order', label: 'متابعة طلبي' },
                 { to: '/favorites', label: 'المفضلة' },
               ].map((link) => (
                 <Link
