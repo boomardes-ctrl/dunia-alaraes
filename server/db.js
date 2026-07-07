@@ -30,7 +30,7 @@ async function q(sql, args) {
   if (!res) throw new Error('DB query failed');
   return { rows: res.rows?.map(r => {
     const obj = {};
-    res.cols.forEach((col, i) => { obj[col.name] = r[i]; });
+    res.cols.forEach((col, i) => { const cell = r[i]; obj[col.name] = cell ? cell.value : null; });
     return obj;
   }) || [], lastInsertRowid: res.last_insert_rowid, cols: res.cols };
 }
