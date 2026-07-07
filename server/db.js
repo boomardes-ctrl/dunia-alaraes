@@ -10,12 +10,15 @@ const TURSO_TOKEN = process.env.TURSO_DB_TOKEN || 'eyJhbGciOiJFZERTQSIsInR5cCI6I
 
 const DB_HTTP = TURSO_URL.replace('libsql://', 'https://') + '/v2/pipeline';
 
+function tv(v) {
+  if (v === null || v === undefined) return { type: 'null' };
+  if (typeof v === 'number') return { type: Number.isInteger(v) ? 'integer' : 'float', value: String(v) };
+  return { type: 'text', value: String(v) };
+}
+
 async function q(sql, args) {
-  if (typeof sql === 'object' && sql !== null) {
-    args = sql.args || [];
-    sql = sql.sql;
-  }
-  const body = { requests: [{ type: 'execute', stmt: { sql, args: args || [] } }] };
+  if (typeof sql === 'object' && sql !== null) { args = sql.args || []; sql = sql.sql; }
+  const body = { requests: [{ type: 'execute', stmt: { sql, args: (args || []).map(tv) } }] };
   const resp = await fetch(DB_HTTP, {
     method: 'POST',
     headers: { Authorization: `Bearer ${TURSO_TOKEN}`, 'Content-Type': 'application/json' },
@@ -27,33 +30,38 @@ async function q(sql, args) {
   }
   const result = await resp.json();
   const res = result.results?.[0]?.response?.result;
-  if (!res) throw new Error('DB query failed');
+  if (!res) {
+    const err = result.results?.[0]?.error || 'DB query failed';
+    throw new Error(typeof err === 'object' ? JSON.stringify(err) : err);
+  }
   return { rows: res.rows?.map(r => {
     const obj = {};
-    res.cols.forEach((col, i) => { const cell = r[i]; obj[col.name] = cell ? cell.value : null; });
+    res.cols.forEach((col, i) => {
+      const cell = r[i];
+      if (!cell || cell.type === 'null') { obj[col.name] = null; return; }
+      if (cell.type === 'integer') obj[col.name] = Number(cell.value);
+      else if (cell.type === 'float') obj[col.name] = parseFloat(cell.value);
+      else obj[col.name] = cell.value;
+    });
     return obj;
   }) || [], lastInsertRowid: res.last_insert_rowid, cols: res.cols };
 }
 
-async function exec(sql, args) {
-  return q(sql, args);
-}
-
-const db = { execute: exec };
+const db = { execute: q };
 
 async function initDatabase() {
-  await exec("CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, nameEn TEXT, image TEXT, sortOrder INTEGER DEFAULT 0, createdAt TEXT DEFAULT (datetime('now')))");
-  await exec("CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, nameEn TEXT, description TEXT, price REAL NOT NULL, oldPrice REAL, images TEXT DEFAULT '[]', categoryId INTEGER, featured INTEGER DEFAULT 0, bestSeller INTEGER DEFAULT 0, hasOffer INTEGER DEFAULT 0, brand TEXT, inStock INTEGER DEFAULT 1, currency TEXT DEFAULT 'sar', createdAt TEXT DEFAULT (datetime('now')), FOREIGN KEY (categoryId) REFERENCES categories(id) ON DELETE SET NULL)");
-  await exec("CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, orderNumber TEXT UNIQUE NOT NULL, token TEXT UNIQUE NOT NULL, customerName TEXT NOT NULL, customerPhone TEXT NOT NULL, city TEXT NOT NULL, address TEXT DEFAULT '', notes TEXT DEFAULT '', items TEXT NOT NULL, total REAL NOT NULL, totalSar REAL DEFAULT 0, totalYer REAL DEFAULT 0, status TEXT DEFAULT 'جديد', createdAt TEXT DEFAULT (datetime('now')), updatedAt TEXT DEFAULT (datetime('now')))");
-  await exec("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)");
-  await exec("CREATE TABLE IF NOT EXISTS admins (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL)");
-  await exec("CREATE TABLE IF NOT EXISTS media (id TEXT PRIMARY KEY, data TEXT NOT NULL, mime TEXT DEFAULT 'image/jpeg', createdAt TEXT DEFAULT (datetime('now')))");
+  await q("CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, nameEn TEXT, image TEXT, sortOrder INTEGER DEFAULT 0, createdAt TEXT DEFAULT (datetime('now')))");
+  await q("CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, nameEn TEXT, description TEXT, price REAL NOT NULL, oldPrice REAL, images TEXT DEFAULT '[]', categoryId INTEGER, featured INTEGER DEFAULT 0, bestSeller INTEGER DEFAULT 0, hasOffer INTEGER DEFAULT 0, brand TEXT, inStock INTEGER DEFAULT 1, currency TEXT DEFAULT 'sar', createdAt TEXT DEFAULT (datetime('now')), FOREIGN KEY (categoryId) REFERENCES categories(id) ON DELETE SET NULL)");
+  await q("CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, orderNumber TEXT UNIQUE NOT NULL, token TEXT UNIQUE NOT NULL, customerName TEXT NOT NULL, customerPhone TEXT NOT NULL, city TEXT NOT NULL, address TEXT DEFAULT '', notes TEXT DEFAULT '', items TEXT NOT NULL, total REAL NOT NULL, totalSar REAL DEFAULT 0, totalYer REAL DEFAULT 0, status TEXT DEFAULT 'جديد', createdAt TEXT DEFAULT (datetime('now')), updatedAt TEXT DEFAULT (datetime('now')))");
+  await q("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)");
+  await q("CREATE TABLE IF NOT EXISTS admins (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL)");
+  await q("CREATE TABLE IF NOT EXISTS media (id TEXT PRIMARY KEY, data TEXT NOT NULL, mime TEXT DEFAULT 'image/jpeg', createdAt TEXT DEFAULT (datetime('now')))");
 
-  const admin = (await exec('SELECT * FROM admins WHERE id = 1')).rows[0];
+  const admin = (await q('SELECT * FROM admins WHERE id = 1')).rows[0];
   if (!admin) {
-    await exec('INSERT INTO admins (username, password) VALUES (?, ?)', ['admin', bcrypt.hashSync('1234', 10)]);
+    await q('INSERT INTO admins (username, password) VALUES (?, ?)', ['admin', bcrypt.hashSync('1234', 10)]);
   } else if (bcrypt.compareSync('admin123', admin.password)) {
-    await exec('UPDATE admins SET password = ? WHERE id = 1', [bcrypt.hashSync('1234', 10)]);
+    await q('UPDATE admins SET password = ? WHERE id = 1', [bcrypt.hashSync('1234', 10)]);
   }
 
   const defaultSettings = {
@@ -64,15 +72,15 @@ async function initDatabase() {
     gallery: '["/gallery/1.jpg","/gallery/2.jpg","/gallery/3.jpg","/gallery/4.jpg","/gallery/5.jpg"]',
   };
   for (const [key, value] of Object.entries(defaultSettings)) {
-    await exec('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)', [key, value]);
+    await q('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)', [key, value]);
   }
 
-  const catCount = (await exec('SELECT COUNT(*) as c FROM categories')).rows[0].c;
+  const catCount = (await q('SELECT COUNT(*) as c FROM categories')).rows[0].c;
   if (catCount === 0) {
     const cats = ['العطور', 'المكياج', 'العناية بالبشرة', 'العناية بالشعر', 'الإكسسوارات', 'هدايا'];
     const catEn = ['Perfumes', 'Makeup', 'Skincare', 'Hair Care', 'Accessories', 'Gifts'];
     for (let i = 0; i < cats.length; i++) {
-      await exec('INSERT INTO categories (name, nameEn, sortOrder) VALUES (?, ?, ?)', [cats[i], catEn[i], i + 1]);
+      await q('INSERT INTO categories (name, nameEn, sortOrder) VALUES (?, ?, ?)', [cats[i], catEn[i], i + 1]);
     }
 
     const products = [
@@ -98,7 +106,7 @@ async function initDatabase() {
       { name: 'أقراط ألماس', nameEn: 'Diamond Earrings', description: 'أقراط ألماس طبيعي نقي.', price: 550, oldPrice: 700, categoryId: 5, featured: 1, hasOffer: 1, brand: 'لولو', images: JSON.stringify(['https://images.unsplash.com/photo-1535632066927-ab7c8ab60908?w=400&q=80']) },
     ];
     for (const p of products) {
-      await exec('INSERT INTO products (name, nameEn, description, price, oldPrice, images, categoryId, featured, bestSeller, hasOffer, brand, inStock, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, \'sar\')', [p.name, p.nameEn, p.description, p.price, p.oldPrice || null, p.images, p.categoryId, p.featured || 0, p.bestSeller || 0, p.hasOffer || 0, p.brand || null]);
+      await q('INSERT INTO products (name, nameEn, description, price, oldPrice, images, categoryId, featured, bestSeller, hasOffer, brand, inStock, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, \'sar\')', [p.name, p.nameEn, p.description, p.price, p.oldPrice || null, p.images, p.categoryId, p.featured || 0, p.bestSeller || 0, p.hasOffer || 0, p.brand || null]);
     }
   }
   console.log('Database initialized');
