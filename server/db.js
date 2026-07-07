@@ -11,6 +11,10 @@ const TURSO_TOKEN = process.env.TURSO_DB_TOKEN || 'eyJhbGciOiJFZERTQSIsInR5cCI6I
 const DB_HTTP = TURSO_URL.replace('libsql://', 'https://') + '/v2/pipeline';
 
 async function q(sql, args) {
+  if (typeof sql === 'object' && sql !== null) {
+    args = sql.args || [];
+    sql = sql.sql;
+  }
   const body = { requests: [{ type: 'execute', stmt: { sql, args: args || [] } }] };
   const resp = await fetch(DB_HTTP, {
     method: 'POST',
