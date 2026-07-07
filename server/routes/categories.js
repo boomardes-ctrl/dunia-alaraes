@@ -16,39 +16,42 @@ function auth(req, res, next) {
   }
 }
 
-router.get('/', (req, res) => {
-  const categories = db.prepare('SELECT * FROM categories ORDER BY sortOrder ASC, name ASC').all();
-  res.json(categories);
+router.get('/', async (req, res) => {
+  const { rows } = await db.execute('SELECT * FROM categories ORDER BY sortOrder ASC, name ASC');
+  res.json(rows);
 });
 
-router.post('/', auth, (req, res) => {
+router.post('/', auth, async (req, res) => {
   const { name, nameEn, image } = req.body;
-  const maxOrder = db.prepare('SELECT MAX(sortOrder) as m FROM categories').get();
-  const result = db.prepare('INSERT INTO categories (name, nameEn, image, sortOrder) VALUES (?, ?, ?, ?)').run(name, nameEn || '', image || '', (maxOrder?.m || 0) + 1);
-  res.json({ id: result.lastInsertRowid });
+  const { rows } = await db.execute('SELECT MAX(sortOrder) as m FROM categories');
+  const maxOrder = rows[0]?.m || 0;
+  const { lastInsertRowid } = await db.execute({ sql: 'INSERT INTO categories (name, nameEn, image, sortOrder) VALUES (?, ?, ?, ?)', args: [name, nameEn || '', image || '', maxOrder + 1] });
+  res.json({ id: Number(lastInsertRowid) });
 });
 
-router.put('/reorder', auth, (req, res) => {
+router.put('/reorder', auth, async (req, res) => {
   const { items } = req.body;
-  const stmt = db.prepare('UPDATE categories SET sortOrder = ? WHERE id = ?');
-  const trx = db.transaction((items) => {
+  await db.execute('BEGIN');
+  try {
     for (const [index, id] of items.entries()) {
-      stmt.run(index, id);
+      await db.execute({ sql: 'UPDATE categories SET sortOrder = ? WHERE id = ?', args: [index, id] });
     }
-  });
-  trx(items);
+    await db.execute('COMMIT');
+  } catch (err) {
+    await db.execute('ROLLBACK');
+  }
   res.json({ message: 'تم إعادة الترتيب' });
 });
 
-router.put('/:id', auth, (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   const { name, nameEn, image } = req.body;
-  db.prepare('UPDATE categories SET name=?, nameEn=?, image=? WHERE id=?').run(name, nameEn || '', image || '', req.params.id);
+  await db.execute({ sql: 'UPDATE categories SET name=?, nameEn=?, image=? WHERE id=?', args: [name, nameEn || '', image || '', req.params.id] });
   res.json({ message: 'تم التحديث' });
 });
 
-router.delete('/:id', auth, (req, res) => {
-  db.prepare('UPDATE products SET categoryId = NULL WHERE categoryId = ?').run(req.params.id);
-  db.prepare('DELETE FROM categories WHERE id = ?').run(req.params.id);
+router.delete('/:id', auth, async (req, res) => {
+  await db.execute({ sql: 'UPDATE products SET categoryId = NULL WHERE categoryId = ?', args: [req.params.id] });
+  await db.execute({ sql: 'DELETE FROM categories WHERE id = ?', args: [req.params.id] });
   res.json({ message: 'تم الحذف' });
 });
 

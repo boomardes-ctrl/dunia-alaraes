@@ -61,7 +61,6 @@ router.post('/', upload.single('file'), async (req, res) => {
     }
   }
 
-  // ImgBB
   if (IMGBB_API_KEY) {
     try {
       const base64 = req.file.buffer.toString('base64');
@@ -74,16 +73,13 @@ router.post('/', upload.single('file'), async (req, res) => {
       if (result && result.data && result.data.url) {
         return res.json({ url: result.data.url });
       }
-    } catch (err) {
-      // imgbb failed, fall through
-    }
+    } catch (err) {}
   }
 
-  // Fallback: Save to DB as base64
   const mediaId = uuidv4();
   const base64 = req.file.buffer.toString('base64');
   const mime = req.file.mimetype;
-  db.prepare('INSERT INTO media (id, data, mime) VALUES (?, ?, ?)').run(mediaId, base64, mime);
+  await db.execute({ sql: 'INSERT INTO media (id, data, mime) VALUES (?, ?, ?)', args: [mediaId, base64, mime] });
 
   if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
   const filename = `${mediaId}${extname(req.file.originalname)}`;

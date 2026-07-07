@@ -4,6 +4,7 @@ import db from '../db.js';
 import { JWT_SECRET } from './admin.js';
 
 const router = Router();
+const stringKeys = ['phone', 'whatsapp', 'siteName', 'siteDescription', 'address', 'email', 'heroTitle', 'heroSubtitle', 'aboutText'];
 
 function auth(req, res, next) {
   const auth = req.headers.authorization;
@@ -16,10 +17,9 @@ function auth(req, res, next) {
   }
 }
 
-router.get('/', (req, res) => {
-  const rows = db.prepare('SELECT key, value FROM settings').all();
+router.get('/', async (req, res) => {
+  const { rows } = await db.execute('SELECT key, value FROM settings');
   const settings = {};
-  const stringKeys = ['phone', 'whatsapp', 'siteName', 'siteDescription', 'address', 'email', 'heroTitle', 'heroSubtitle', 'aboutText'];
   for (const row of rows) {
     try { settings[row.key] = JSON.parse(row.value); } catch { settings[row.key] = row.value; }
     if (stringKeys.includes(row.key)) settings[row.key] = String(settings[row.key]);
@@ -27,14 +27,16 @@ router.get('/', (req, res) => {
   res.json(settings);
 });
 
-router.put('/', auth, (req, res) => {
-  const stmt = db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
-  const trx = db.transaction((settings) => {
-    for (const [key, value] of Object.entries(settings)) {
-      stmt.run(key, typeof value === 'object' ? JSON.stringify(value) : value);
+router.put('/', auth, async (req, res) => {
+  await db.execute('BEGIN');
+  try {
+    for (const [key, value] of Object.entries(req.body)) {
+      await db.execute({ sql: 'INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', args: [key, typeof value === 'object' ? JSON.stringify(value) : value] });
     }
-  });
-  trx(req.body);
+    await db.execute('COMMIT');
+  } catch (err) {
+    await db.execute('ROLLBACK');
+  }
   res.json({ message: 'تم حفظ الإعدادات' });
 });
 

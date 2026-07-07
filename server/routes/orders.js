@@ -5,21 +5,6 @@ import { JWT_SECRET } from './admin.js';
 
 const router = Router();
 
-function generateOrderNumber() {
-  const last = db.prepare('SELECT id FROM orders ORDER BY id DESC LIMIT 1').get();
-  const next = (last?.id || 0) + 1;
-  return `ds-${next}`;
-}
-
-function generateToken() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let token = '';
-  for (let i = 0; i < 16; i++) {
-    token += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return token;
-}
-
 function auth(req, res, next) {
   const auth = req.headers.authorization;
   if (!auth) return res.status(401).json({ error: 'غير مصرح' });
@@ -31,14 +16,24 @@ function auth(req, res, next) {
   }
 }
 
-router.post('/', (req, res) => {
+async function generateOrderNumber() {
+  const { rows } = await db.execute('SELECT id FROM orders ORDER BY id DESC LIMIT 1');
+  const next = (rows[0]?.id || 0) + 1;
+  return `ds-${next}`;
+}
+
+function generateToken() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let token = '';
+  for (let i = 0; i < 16; i++) token += chars.charAt(Math.floor(Math.random() * chars.length));
+  return token;
+}
+
+router.post('/', async (req, res) => {
   const { customerName, customerPhone, city, address, notes, items, total, totalSar, totalYer, whatsappNumber, frontendUrl } = req.body;
-  const orderNumber = generateOrderNumber();
+  const orderNumber = await generateOrderNumber();
   const token = generateToken();
-  try { db.prepare("ALTER TABLE orders ADD COLUMN totalSar REAL DEFAULT 0").run(); } catch {}
-  try { db.prepare("ALTER TABLE orders ADD COLUMN totalYer REAL DEFAULT 0").run(); } catch {}
-  const result = db.prepare(`INSERT INTO orders (orderNumber, token, customerName, customerPhone, city, address, notes, items, total, totalSar, totalYer)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(orderNumber, token, customerName, customerPhone, city, address || '', notes || '', JSON.stringify(items), total, totalSar || 0, totalYer || 0);
+  const { lastInsertRowid } = await db.execute({ sql: `INSERT INTO orders (orderNumber, token, customerName, customerPhone, city, address, notes, items, total, totalSar, totalYer) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, args: [orderNumber, token, customerName, customerPhone, city, address || '', notes || '', JSON.stringify(items), total, totalSar || 0, totalYer || 0] });
   const origin = frontendUrl || req.headers.origin || `${req.protocol}://${req.get('host')}`;
   const cartLink = `${origin}/cart/${token}`;
   let totalText = `المجموع: ${total}`;
@@ -47,38 +42,38 @@ router.post('/', (req, res) => {
   else if (totalYer) totalText = `المجموع: ${totalYer} ر.ي`;
   const waMsg = encodeURIComponent(`السلام عليكم.\nلدي طلب جديد.\nرقم الطلب: ${orderNumber}\n${totalText}\nرابط السلة: ${cartLink}`);
   const waUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${waMsg}`;
-  res.json({ id: result.lastInsertRowid, orderNumber, token, cartLink, waUrl });
+  res.json({ id: Number(lastInsertRowid), orderNumber, token, cartLink, waUrl });
 });
 
-router.get('/token/:token', (req, res) => {
-  const order = db.prepare('SELECT * FROM orders WHERE token = ?').get(req.params.token);
-  if (!order) return res.status(404).json({ error: 'الطلب غير موجود' });
-  order.items = JSON.parse(order.items);
-  res.json(order);
+router.get('/token/:token', async (req, res) => {
+  const { rows } = await db.execute({ sql: 'SELECT * FROM orders WHERE token = ?', args: [req.params.token] });
+  if (!rows[0]) return res.status(404).json({ error: 'الطلب غير موجود' });
+  rows[0].items = JSON.parse(rows[0].items);
+  res.json(rows[0]);
 });
 
-router.get('/', auth, (req, res) => {
+router.get('/', auth, async (req, res) => {
   const { search, status } = req.query;
   let sql = 'SELECT * FROM orders WHERE 1=1';
-  const params = [];
-  if (search) { sql += ' AND (orderNumber LIKE ? OR customerName LIKE ? OR customerPhone LIKE ?)'; params.push(`%${search}%`, `%${search}%`, `%${search}%`); }
-  if (status) { sql += ' AND status = ?'; params.push(status); }
+  const args = [];
+  if (search) { sql += ' AND (orderNumber LIKE ? OR customerName LIKE ? OR customerPhone LIKE ?)'; args.push(`%${search}%`, `%${search}%`, `%${search}%`); }
+  if (status) { sql += ' AND status = ?'; args.push(status); }
   sql += ' ORDER BY createdAt DESC';
-  const orders = db.prepare(sql).all(...params);
-  res.json(orders.map(o => ({ ...o, items: JSON.parse(o.items) })));
+  const { rows } = await db.execute({ sql, args });
+  res.json(rows.map(o => ({ ...o, items: JSON.parse(o.items) })));
 });
 
-router.put('/:id/status', auth, (req, res) => {
+router.put('/:id/status', auth, async (req, res) => {
   const { status } = req.body;
-  db.prepare("UPDATE orders SET status = ?, updatedAt = datetime('now') WHERE id = ?").run(status, req.params.id);
+  await db.execute({ sql: "UPDATE orders SET status = ?, updatedAt = datetime('now') WHERE id = ?", args: [status, req.params.id] });
   res.json({ message: 'تم تحديث الحالة' });
 });
 
-router.get('/:id', auth, (req, res) => {
-  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
-  if (!order) return res.status(404).json({ error: 'الطلب غير موجود' });
-  order.items = JSON.parse(order.items);
-  res.json(order);
+router.get('/:id', auth, async (req, res) => {
+  const { rows } = await db.execute({ sql: 'SELECT * FROM orders WHERE id = ?', args: [req.params.id] });
+  if (!rows[0]) return res.status(404).json({ error: 'الطلب غير موجود' });
+  rows[0].items = JSON.parse(rows[0].items);
+  res.json(rows[0]);
 });
 
 export default router;
