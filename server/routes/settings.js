@@ -28,16 +28,14 @@ router.get('/', async (req, res) => {
 });
 
 router.put('/', auth, async (req, res) => {
-  await db.execute('BEGIN');
   try {
     for (const [key, value] of Object.entries(req.body)) {
       await db.execute({ sql: 'INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', args: [key, typeof value === 'object' ? JSON.stringify(value) : value] });
     }
-    await db.execute('COMMIT');
+    res.json({ message: 'تم حفظ الإعدادات' });
   } catch (err) {
-    await db.execute('ROLLBACK');
+    res.status(500).json({ error: err.message });
   }
-  res.json({ message: 'تم حفظ الإعدادات' });
 });
 
 export default router;

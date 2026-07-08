@@ -43,7 +43,6 @@ router.post('/restore', auth, async (req, res) => {
     return res.status(400).json({ error: 'بيانات غير صالحة' });
   }
   try {
-    await db.execute('BEGIN');
     await db.execute('DELETE FROM products');
     await db.execute('DELETE FROM categories');
     await db.execute('DELETE FROM orders');
@@ -71,10 +70,8 @@ router.post('/restore', auth, async (req, res) => {
       }
     }
 
-    await db.execute('COMMIT');
     res.json({ message: `تمت استعادة ${data.products.length} منتج و ${data.categories.length} قسم و ${(data.media || []).length} صورة` });
   } catch (err) {
-    await db.execute('ROLLBACK');
     res.status(500).json({ error: err.message });
   }
 });

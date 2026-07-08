@@ -31,14 +31,8 @@ router.post('/', auth, async (req, res) => {
 
 router.put('/reorder', auth, async (req, res) => {
   const { items } = req.body;
-  await db.execute('BEGIN');
-  try {
-    for (const [index, id] of items.entries()) {
-      await db.execute({ sql: 'UPDATE categories SET sortOrder = ? WHERE id = ?', args: [index, id] });
-    }
-    await db.execute('COMMIT');
-  } catch (err) {
-    await db.execute('ROLLBACK');
+  for (const [index, id] of items.entries()) {
+    await db.execute({ sql: 'UPDATE categories SET sortOrder = ? WHERE id = ?', args: [index, id] });
   }
   res.json({ message: 'تم إعادة الترتيب' });
 });
