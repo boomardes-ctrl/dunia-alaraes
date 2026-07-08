@@ -81,6 +81,7 @@ export default function OrderStatus() {
     setOrder(null);
     try {
       const order = await api.trackOrder(query);
+      setOrder(order);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -194,16 +195,19 @@ export default function OrderStatus() {
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
               <h2 className="font-black text-lg mb-4">المنتجات</h2>
               <div className="space-y-3">
-                {order.items.map((item: any, i: number) => (
+                {order.items.map((item: any, i: number) => {
+                  const prod = item.product || item;
+                  return (
                   <div key={i} className="flex items-center gap-3 p-3 border border-gray-100 rounded-2xl hover:border-primary/20 transition-all">
-                    <img src={item.product.images?.[0] || '/placeholder.svg'} alt={item.product.name} className="w-16 h-16 object-cover rounded-xl" />
+                    <img src={prod.images?.[0] || '/placeholder.svg'} alt={prod.name} className="w-16 h-16 object-cover rounded-xl" />
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm truncate">{item.product.name}</p>
-                      <p className="text-text-light text-xs mt-0.5">{item.product.price} {CURRENCIES[item.product.currency as 'sar' | 'yer']?.symbol || 'ر.س'} × {item.quantity}</p>
+                      <p className="font-bold text-sm truncate">{prod.name}</p>
+                      <p className="text-text-light text-xs mt-0.5">{prod.price} {CURRENCIES[prod.currency as 'sar' | 'yer']?.symbol || 'ر.س'} × {item.quantity}</p>
                     </div>
-                    <p className="font-black text-primary text-sm">{item.product.price * item.quantity} {CURRENCIES[item.product.currency as 'sar' | 'yer']?.symbol || 'ر.س'}</p>
+                    <p className="font-black text-primary text-sm">{prod.price * item.quantity} {CURRENCIES[prod.currency as 'sar' | 'yer']?.symbol || 'ر.س'}</p>
                   </div>
-                ))}
+                  );
+                })}
               </div>
               <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
                 <p className="text-text-light">الإجمالي</p>
