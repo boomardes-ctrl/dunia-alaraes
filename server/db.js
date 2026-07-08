@@ -2,6 +2,8 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import bcrypt from 'bcryptjs';
 
+const gfetch = typeof fetch !== 'undefined' ? fetch : (await import('node-fetch')).default;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -19,7 +21,7 @@ function tv(v) {
 async function q(sql, args) {
   if (typeof sql === 'object' && sql !== null) { args = sql.args || []; sql = sql.sql; }
   const body = { requests: [{ type: 'execute', stmt: { sql, args: (args || []).map(tv) } }] };
-  const resp = await fetch(DB_HTTP, {
+  const resp = await gfetch(DB_HTTP, {
     method: 'POST',
     headers: { Authorization: `Bearer ${TURSO_TOKEN}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
