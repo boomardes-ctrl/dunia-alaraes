@@ -47,9 +47,7 @@ if (isProd) {
   });
 }
 
-initDatabase().then(() => {
-  app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT} (${isProd ? 'production' : 'development'})`));
-}).catch(err => {
-  console.error('DB init failed:', err);
-  app.listen(PORT, () => console.log(`Server running (no DB) on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT} (${isProd ? 'production' : 'development'})`);
+  initDatabase().catch(err => console.error('DB init failed:', err));
 });
