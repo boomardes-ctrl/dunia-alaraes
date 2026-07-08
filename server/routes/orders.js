@@ -52,6 +52,13 @@ router.get('/token/:token', async (req, res) => {
   res.json(rows[0]);
 });
 
+router.get('/track/:orderNumber', async (req, res) => {
+  const { rows } = await db.execute({ sql: 'SELECT * FROM orders WHERE orderNumber = ?', args: [req.params.orderNumber] });
+  if (!rows[0]) return res.status(404).json({ error: 'الطلب غير موجود' });
+  rows[0].items = JSON.parse(rows[0].items);
+  res.json(rows[0]);
+});
+
 router.get('/', auth, async (req, res) => {
   const { search, status } = req.query;
   let sql = 'SELECT * FROM orders WHERE 1=1';
