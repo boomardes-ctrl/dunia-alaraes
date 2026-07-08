@@ -80,12 +80,7 @@ export default function OrderStatus() {
     setError('');
     setOrder(null);
     try {
-      const orders = await api.getOrders({ search: query });
-      if (orders.length === 0) {
-        setError('الطلب غير موجود. تأكدي من رقم الطلب');
-      } else {
-        setOrder(orders[0]);
-      }
+      const order = await api.trackOrder(query);
     } catch (err: any) {
       setError(err.message);
     } finally {

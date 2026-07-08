@@ -34,6 +34,7 @@ export const api = {
   // Orders
   createOrder: (data: any) => request('/orders', { method: 'POST', body: JSON.stringify(data) }),
   getOrderByToken: (token: string) => request(`/orders/token/${token}`),
+  trackOrder: (orderNumber: string) => request(`/orders/track/${orderNumber}`),
   getOrders: (params?: Record<string, string>) => {
     const q = params ? '?' + new URLSearchParams(params).toString() : '';
     return request(`/orders${q}`);
