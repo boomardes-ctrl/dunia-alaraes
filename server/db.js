@@ -69,6 +69,10 @@ async function initDatabase() {
   const defaultSettings = {
     siteName: 'دنيا العرائس', siteDescription: 'متجر متخصص في بيع العطور ومستحضرات التجميل والإكسسوارات النسائية',
     phone: '+966500000000', whatsapp: '+966500000000', logo: '', primaryColor: '#6B1D3A', accentColor: '#C9A84C',
+    bgColor: '#FDF8F5', textColor: '#1A1A1A', textLight: '#6B7280', borderColor: '#E5E7EB',
+    successColor: '#059669', warningColor: '#D97706', errorColor: '#DC2626',
+    headerBg: '#6B1D3A', headerText: '#FFFFFF', footerBg: '#4A1227',
+    footerText: '#FFFFFF', cardBg: '#FFFFFF', buttonBg: '#6B1D3A', buttonText: '#FFFFFF',
     heroTitle: 'أهلاً بك في دنيا العرائس', heroSubtitle: 'اكتشف عالم من الجمال والأناقة', heroImage: '', aboutText: '',
     address: 'المملكة العربية السعودية', email: 'info@dunyaalaraes.com', exchangeRate: '250', socialLinks: '[]',
     gallery: '["/gallery/1.jpg","/gallery/2.jpg","/gallery/3.jpg","/gallery/4.jpg","/gallery/5.jpg"]',

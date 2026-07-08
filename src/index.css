@@ -15,6 +15,13 @@
   --color-success: #059669;
   --color-warning: #D97706;
   --color-error: #DC2626;
+  --color-header-bg: #6B1D3A;
+  --color-header-text: #FFFFFF;
+  --color-footer-bg: #4A1227;
+  --color-footer-text: #FFFFFF;
+  --color-card-bg: #FFFFFF;
+  --color-btn-bg: #6B1D3A;
+  --color-btn-text: #FFFFFF;
   --color-glass: rgba(255, 255, 255, 0.15);
   --color-glass-border: rgba(255, 255, 255, 0.25);
 }
@@ -37,7 +44,7 @@
 @layer components {
   .btn-primary {
     background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-    color: white;
+    color: var(--color-btn-text);
     padding: 0.75rem 1.5rem;
     border-radius: 0.75rem;
     font-weight: 700;
@@ -47,11 +54,11 @@
     border: none;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(107, 29, 58, 0.3);
+    box-shadow: 0 4px 15px rgba(var(--color-primary-rgb, 107, 29, 58), 0.3);
   }
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(107, 29, 58, 0.4);
+    box-shadow: 0 8px 25px rgba(var(--color-primary-rgb, 107, 29, 58), 0.4);
   }
   .btn-primary:active { transform: translateY(0); }
   .btn-accent {
@@ -64,16 +71,16 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     border: none;
-    box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
+    box-shadow: 0 4px 15px rgba(var(--color-accent-rgb, 201, 168, 76), 0.3);
   }
   .btn-accent:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(201, 168, 76, 0.4);
+    box-shadow: 0 8px 25px rgba(var(--color-accent-rgb, 201, 168, 76), 0.4);
   }
   .btn-accent:active { transform: translateY(0); }
 
   .card {
-    background: white;
+    background: var(--color-card-bg);
     border-radius: 1rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -84,7 +91,7 @@
   }
 
   .card-modern {
-    background: white;
+    background: var(--color-card-bg);
     border-radius: 1.25rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -111,11 +118,11 @@
     font-family: 'Cairo', sans-serif;
     font-size: 0.95rem;
     transition: all 0.3s;
-    background: white;
+    background: var(--color-card-bg);
   }
   .input-field:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 4px rgba(107, 29, 58, 0.1);
+    box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb, 107, 29, 58), 0.1);
   }
 
   .section-title {

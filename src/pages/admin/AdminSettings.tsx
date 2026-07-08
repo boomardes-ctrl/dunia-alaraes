@@ -8,7 +8,12 @@ import { SOCIAL_PLATFORMS } from '../../types';
 export default function AdminSettings() {
   const [form, setForm] = useState<Settings>({
     siteName: '', siteDescription: '', phone: '', whatsapp: '', logo: '',
-    primaryColor: '#6B1D3A', accentColor: '#C9A84C', heroTitle: '', heroSubtitle: '',
+    primaryColor: '#6B1D3A', accentColor: '#C9A84C', bgColor: '#FDF8F5',
+    textColor: '#1A1A1A', textLight: '#6B7280', borderColor: '#E5E7EB',
+    successColor: '#059669', warningColor: '#D97706', errorColor: '#DC2626',
+    headerBg: '#6B1D3A', headerText: '#FFFFFF', footerBg: '#4A1227',
+    footerText: '#FFFFFF', cardBg: '#FFFFFF', buttonBg: '#6B1D3A', buttonText: '#FFFFFF',
+    heroTitle: '', heroSubtitle: '',
     heroImage: '', aboutText: '', address: '', email: '', exchangeRate: '250',
     socialLinks: [], gallery: [],
   });
@@ -89,17 +94,29 @@ export default function AdminSettings() {
         </div>
 
         <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 space-y-4">
-          <h2 className="font-bold text-lg">المظهر</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-text-light mb-1">اللون الأساسي</label>
-              <input type="color" value={form.primaryColor} onChange={(e) => setForm({ ...form, primaryColor: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-text-light mb-1">لون التمييز</label>
-              <input type="color" value={form.accentColor} onChange={(e) => setForm({ ...form, accentColor: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" />
-            </div>
+          <h2 className="font-bold text-lg">المظهر — الألوان</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div><label className="block text-xs font-bold text-text-light mb-1">اللون الأساسي</label><input type="color" value={form.primaryColor} onChange={(e) => setForm({ ...form, primaryColor: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">لون التمييز</label><input type="color" value={form.accentColor} onChange={(e) => setForm({ ...form, accentColor: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">خلفية الصفحة</label><input type="color" value={form.bgColor} onChange={(e) => setForm({ ...form, bgColor: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">لون النصوص</label><input type="color" value={form.textColor} onChange={(e) => setForm({ ...form, textColor: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">نصوص ثانوية</label><input type="color" value={form.textLight} onChange={(e) => setForm({ ...form, textLight: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">الحدود</label><input type="color" value={form.borderColor} onChange={(e) => setForm({ ...form, borderColor: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">خلفية الهيدر</label><input type="color" value={form.headerBg} onChange={(e) => setForm({ ...form, headerBg: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">نص الهيدر</label><input type="color" value={form.headerText} onChange={(e) => setForm({ ...form, headerText: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">خلفية الفوتر</label><input type="color" value={form.footerBg} onChange={(e) => setForm({ ...form, footerBg: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">نص الفوتر</label><input type="color" value={form.footerText} onChange={(e) => setForm({ ...form, footerText: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">خلفية البطاقات</label><input type="color" value={form.cardBg} onChange={(e) => setForm({ ...form, cardBg: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">خلفية الأزرار</label><input type="color" value={form.buttonBg} onChange={(e) => setForm({ ...form, buttonBg: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">نص الأزرار</label><input type="color" value={form.buttonText} onChange={(e) => setForm({ ...form, buttonText: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">لون النجاح</label><input type="color" value={form.successColor} onChange={(e) => setForm({ ...form, successColor: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">لون التحذير</label><input type="color" value={form.warningColor} onChange={(e) => setForm({ ...form, warningColor: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
+            <div><label className="block text-xs font-bold text-text-light mb-1">لون الخطأ</label><input type="color" value={form.errorColor} onChange={(e) => setForm({ ...form, errorColor: e.target.value })} className="w-full h-10 rounded-xl cursor-pointer" /></div>
           </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 space-y-4">
+          <h2 className="font-bold text-lg">المظهر — النصوص والصور</h2>
           <div>
             <label className="block text-xs font-bold text-text-light mb-1">عنوان الهيرو</label>
             <input value={form.heroTitle} onChange={(e) => setForm({ ...form, heroTitle: e.target.value })} className="input-field" />
@@ -125,7 +142,6 @@ export default function AdminSettings() {
             <textarea value={form.aboutText} onChange={(e) => setForm({ ...form, aboutText: e.target.value })} className="input-field" rows={3} />
           </div>
         </div>
-
         <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 space-y-4">
           <h2 className="font-bold text-lg">معرض الصور</h2>
           <p className="text-xs text-text-light">أضف حتى 5 صور للإعلانات والعروض (تظهر في الصفحة الرئيسية)</p>
