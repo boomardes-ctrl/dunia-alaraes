@@ -9,6 +9,7 @@
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:server\"",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "start": "node server/index.js",
     "preview": "vite preview"
   },
   "dependencies": {
